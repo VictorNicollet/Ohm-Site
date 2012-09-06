@@ -12,5 +12,7 @@
 }
 
 body {
+  background-color: #EEE;
+  margin: 0;
   font-family: 'Open Sans', Verdana, sans-serif;
 }
