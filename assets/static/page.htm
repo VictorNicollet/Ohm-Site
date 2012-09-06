@@ -5,16 +5,32 @@
   width: 900px;
   margin: auto;
   overflow: hidden;
+  font-size: 14px;
 
-  p, pre {
-    margin-left: 350px;
+  p, pre, ul {
+    margin: 0 0 18px 350px;
+  }
+
+  p, ul { 
+    line-height: 1.65em;    
+  }
+
+  code {
+    background-color: #CCC;
+    color: black;
+    font-size: 13px;
+    display: inline-block;
+    padding: 0 5px;
+    border-radius: 4px;
+    font-weight: normal;
   }
 
   pre {
-    padding: 10px;
+    font-size: 12px;
+    padding: 8px 10px 12px;
     background-color: #1d1f21;
     color: #c5c8c6;
-    .comment { color: #c5c8c6 }
+    .comment { color: #969896 }
     .string  { color: #cc6666 }
     .keyword { color: #81a2be }
     .name    { color: #8abeb7 }
@@ -30,6 +46,7 @@
     width: 320px;
     text-align: right;
     color: #888;
+    margin: 0;
   }
 }
 </style>
