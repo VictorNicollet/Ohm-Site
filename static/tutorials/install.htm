@@ -1,31 +1,32 @@
 <h3>Installing Dependencies</h3>
 
-<p>Ohm requires OCaml 3.12.0 to be installed, as well as <i>ocamlbuild</i>, <i>ocamlfind</i> and <i>Batteries</i>. Its asset pipeline (the part that generates CSS and JavaScript from your assets) relies on <i>CoffeeScript</i> and <i>LESS CSS</i>. The asynchronous processing relies on the <i>supervise</i> tool. If you are running Debian, or a Debian-compatible distribution, you can use the following command to fetch all required packages:</p>
+<p>Ohm requires OCaml 3.12.0 to be installed, as well as <i>ocamlbuild</i>, <i>ocamlfind</i> and <i>Batteries</i>. Its asset pipeline (the part that generates CSS and JavaScript from your assets) relies on <i>CoffeeScript</i> and <i>LESS CSS</i>. By default, it relies on <i>CouchDB</i> for persistence. The asynchronous processing relies on the <i>supervise</i> tool. If you are running Debian, or a Debian-compatible distribution, you can use the following command to fetch all required packages:</p>
 
-<pre>apt-get install ocaml-nox ocaml-findlib ocamldsort ocaml-native-compilers \
-    libsha-ocaml-dev libbatteries-ocaml-dev libocamlnet-ocaml-dev \
-    libcurl-ocaml-dev libxmlm-ocaml-dev libapache2-mod-fastcgi make \
-    couchdb coffeescript node-less supervise</pre> 
+<pre>apt-get install ocaml-nox ocaml-findlib ocamldsort \
+    ocaml-native-compilers libsha-ocaml-dev libbatteries-ocaml-dev \
+    libocamlnet-ocaml-dev libcurl-ocaml-dev libxmlm-ocaml-dev \
+    libapache2-mod-fastcgi make couchdb coffeescript node-less \
+    supervise</pre> 
 
 <h3>Installing the <code>ohm</code> tool</h3>
 
 <p>Downloading the Ohm Framework, or updating your local copies, is done using the <code>ohm</code> command-line tool, which you must install first:</p> 
 
-<pre>~$ wget https://raw.github.com/VictorNicollet/Ohm/master/install.sh
-~$ wget https://raw.github.com/VictorNicollet/Ohm/master/run.ml 
-~$ chmod a+x install.sh
-~$ sudo ./install.sh</pre>
+<pre>wget https://raw.github.com/VictorNicollet/Ohm/master/install.sh
+wget https://raw.github.com/VictorNicollet/Ohm/master/run.ml 
+chmod a+x install.sh
+sudo ./install.sh</pre>
 
 <p>This should display the following welcome message:</p>
 
-<pre>Ohm installed !
-Run 'ohm init &lt;directory&gt;' to create a new project</pre>
+<pre><span class=comment>Ohm installed !
+Run 'ohm init &lt;directory&gt;' to create a new project</span></pre>
 
 <h3>Creating a new project</h3>
 
 <p>To create a new project called <code>ice-cream</code>, run the following on the command line:</p>
 
-<pre>~$ ohm init ice-cream</pre>
+<pre>ohm init ice-cream</pre>
 
 <p>The <code>ohm</code> tool will then do a sequence of fairly smart things, so you don't have to do them yourself:</p>
 
@@ -42,14 +43,14 @@ Run 'ohm init &lt;directory&gt;' to create a new project</pre>
 
 <p>Ohm sould be compatible with any FastCGI-capable web server, but it has only been tested with Apache 2.2 so far. The <code>ohm</code> tool can generate a fresh <i>vhost</i> configuration for you:</p>
 
-<pre>~$ cd ice-cream 
-~/ice-cream$ sudo ohm apache-vhost > /etc/apache2/sites-available/ice-cream 
-~/ice-cream$ sudo a2ensite ice-cream 
-~/ice-cream$ sudo service apache2 reload</pre>
+<pre>cd ice-cream 
+sudo ohm apache-vhost > /etc/apache2/sites-available/ice-cream 
+sudo a2ensite ice-cream 
+sudo service apache2 reload</pre>
 
 <p>As a convenient default, this <i>vhost</i> corresponds to the <a href="http://ice-cream.local"><code>ice-cream.local</code></a> domain name, which you need to add to your hosts file on your development machine so that your browser will send the queries to the apache server.</p>
 
-<pre>~$ sudo echo '127.0.0.1 ice-cream.local' > /etc/hosts</pre>
+<pre>sudo echo <span class=string>'127.0.0.1 ice-cream.local'</span> > /etc/hosts</pre>
 
 <p>You can now fire up your web browser and visit <code>http://ice-cream.local/</code>: if everything worked, you should see a 404 Not Found page.</p>
 
@@ -57,8 +58,8 @@ Run 'ohm init &lt;directory&gt;' to create a new project</pre>
 
 <p>Ohm uses asynchronous workers for work that should not be allowed to slow down the FastCGI processes. The default configuration lets you start the asynchronous process quite easily:</p>
 
-<pre>~$ cd ice-cream 
-~/ice-cream$ ohm bot start</pre>
+<pre>cd ice-cream 
+ohm bot start</pre>
 
 <p>This is merely a shortcut for running <code>supervise bot</code> in the project root directory.</p>
 
