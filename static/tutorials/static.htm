@@ -1,0 +1,46 @@
+<h3>Why static pages</h3>
+
+<p>Static pages are the easiest way to get HTML displayed on a visitor's screen, but this comes at the cost of making it harder to use dynamic content on these pages, including variables coming from the database or internationalization.</p>
+
+<p>The typical use cases for static pages are:</p>
+
+<ul>
+  <li>A landing page built using custom HTML.</li>
+  <li>This tutorial.</li>
+  <li>A blog entry on a developer's personal web site.</li>
+  <li>The <i>Terms and Conditions</i> page.</li>
+</ul>
+
+<p>While the heart of a static page is a large block of HTML, you are allowed to make the surrounding HTML dynamic. This includes rendering links to the previous or next article, or manipulating a comments feed below an article.</p>
+
+<hr/>
+
+<h3>Enabling static pages</h3>
+
+<p>To publish static pages, you need to install the corresponding plugin. Run this command in the root directory of your project:</p>
+
+<pre>ohm plug ohmStatic</pre>
+
+<p>The plugin should now be enabled. Next, create a <code>/static</code> directory in the root directory of your project, and add an <code>index.htm</code> file there: </p>
+
+<pre><div class="src">/static/index.htm</div>&lt;p>Hello, world&nbsp;!&lt;/p></pre>
+
+<p>Many ohm plugins have a <abbr title="Do What I Mean">DWIM</abbr> running mode which is executed for all enabled plugins when the project build process begins. The DWIM mode of the <em>ohmStatic</em> plugin recursively explores the <code>/static</code> directory in the project root, and turns any files found inside into either pages (for the <em>.htm</em>, <em>.html</em> and <em>.md</em> extensions) or downloadable files (any other extensions). </p>
+
+<hr/>
+
+<h3>Displaying static pages</h3>
+
+<p>The <em>ohmStatic</em> plugin build step turns your static pages into assets, but does not display them. You now need to write a short bit of OCaml code to do so:</p>
+
+<pre><div class="src">ocaml/cStatic.mli</div></pre>
+
+<pre><div class="src">ocaml/cStatic.ml</div>let () = OhmStatic.export 
+  ~server:O.server 
+  ~title:"My Example Page"
+  Static.site 
+</div>
+
+<div class="prev-page">
+  Back to : <a href="<{url:tutorials/install.htm}>">Installing Ohm</a>
+</div>
