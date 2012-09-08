@@ -33,13 +33,17 @@
 
 <p>The <em>ohmStatic</em> plugin build step turns your static pages into assets, but does not display them. You now need to write a short bit of OCaml code to do so:</p>
 
-<pre><div class="src">ocaml/cStatic.mli</div></pre>
+<pre><div class="src">ocaml/cStatic.mli</div><{ocaml:(* Empty file *)}></pre>
 
-<pre><div class="src">ocaml/cStatic.ml</div>let () = OhmStatic.export 
-  ~server:O.server 
-  ~title:"My Example Page"
-  Static.site 
-</div>
+<pre><div class="src">ocaml/cStatic.ml</div><{ocaml:let () = OhmStatic.export 
+  ~server:  O.server 
+  ~title:   "My Example Page"
+  Static.site}></pre>
+
+<pre><div class="src">ocaml/main.ml</div><span class="light">module Controllers = struct
+  open CErrorPage</span>
+<{ocaml:  open CStatic}>
+<span class="light">end</span></pre>
 
 <div class="prev-page">
   Back to : <a href="<{url:tutorials/install.htm}>">Installing Ohm</a>
