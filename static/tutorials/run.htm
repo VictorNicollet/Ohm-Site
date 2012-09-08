@@ -1,0 +1,37 @@
+<h3>What is Ohm.Run ?</h3>
+
+<p>This is the most important concept that you need to understand to use any part of the Ohm Framework. Even if you are familiar with OCaml, you are probably unfamiliar with what Ohm.Run does and why this happens.</p>
+
+<p>Ohm.Run serves two purposes:</p>
+
+<ul>
+  <li>To improve application performance by allowing various optimizations related to external resources, such as performing asynchronous requests or batching several requests together.</li>
+  <li>To define &laquo;&nbsp;global variables&nbsp;&raquo; that are not actually global, but local to a virtual execution thread.</li>
+</ul>
+
+<p>It is somewhat similar to the <a href="http://ocsigen.org/lwt/">LWT</a> pre-emptive threading library.</p>
+
+<hr/>
+
+<h3>The Syntax Extension</h3>
+
+<p>Ohm.Run is used in a monadic style. If you do not know what this means, just ignore the previous sentence. In order to make this style readable in OCaml, Ohm provides a very simple syntax extension based on the camlp4 preprocessor:</p>
+
+<pre><{ocaml:val callback : (string -> 'a) -> 'a
+
+(* Standard OCaml syntax *)
+let _ = callback print_endline
+
+(* Ohm syntax *)
+let _ = 
+  let! line = callback in 
+  print_endline line}></pre>
+
+<p>In short, <code>let! x = &alpha; in &beta;</code> is completely equivalent to <code>&alpha; (fun x -> &beta;)</code>.</p>
+
+<hr/>
+
+<div class="prev-page">
+  Back to : <a href="<{url:tutorials/static.htm}>">Creating Static Pages</a>
+</div>
+
