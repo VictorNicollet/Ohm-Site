@@ -33,17 +33,27 @@
 
 <p>The <em>ohmStatic</em> plugin build step turns your static pages into assets, but does not display them. You now need to write a short bit of OCaml code to do so:</p>
 
-<pre><div class="src">ocaml/cStatic.mli</div><{ocaml:(* Empty file *)}></pre>
-
-<pre><div class="src">ocaml/cStatic.ml</div><{ocaml:let () = OhmStatic.export 
+<pre><div class="src">ocaml/cStatic.ml</div><{ocaml:OhmStatic.export 
   ~server:  O.server 
   ~title:   "My Example Page"
   Static.site}></pre>
+
+<pre><div class="src">ocaml/cStatic.mli</div><{ocaml:(* Empty file *)}></pre>
 
 <pre><div class="src">ocaml/main.ml</div><span class="light">module Controllers = struct
   open CErrorPage</span>
 <{ocaml:  open CStatic}>
 <span class="light">end</span></pre>
+
+<p>These additions will do the following:</p>
+
+<ul>
+  <li>In a brand new controller file <code>cStatic.ml</code>, export the site (available as <code>Static.site</code>) on the default server <code>O.server</code> using &laquo;&nbsp;My Example Page&nbsp;&raquo; as the default title for each page.</li>
+  <li>Provide an empty interface file <code>cStatic.mli</code> to improve compiling time: you may change the implementation file as often as you want, files that depend on that implementation file will not have ot be re-built as long as the interface file remains unchanged. </li>
+  <li>Add <code>open CStatic</code> to the list of controllers in <code>main.ml</code> so that the application will include the code that was just written.</li>
+</ul>
+
+<p>Once this is done, run <code>make</code> in the project root, and visit <a href="http://ice-cream.local">http://ice-cream.local</a> in your web browser to see the new static page appear (you may need to refresh your page before it appears).</p>
 
 <div class="prev-page">
   Back to : <a href="<{url:tutorials/install.htm}>">Installing Ohm</a>
