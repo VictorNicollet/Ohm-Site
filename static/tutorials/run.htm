@@ -31,6 +31,109 @@ let _ =
 
 <hr/>
 
+<h3>Context Variables</h3>
+
+<p>There are several pervasive high-level concepts in a web application, such as a database connection or the current internationalization language. It quickly becomes unproductive to pass such pervasive objects as parameters to every function call that might need them at some point, but at the same time making these objects global may cause all code to become non-re-entrant or leak memory.</p>
+
+<p><code>Ohm.Run</code> lets the programmer define an <b>execution context</b> : a set of values that are required in order to execute a given piece of code or evaluate an expression. The type of a <b>contextual expression</b> or <b>run-box</b> is:
+
+<pre><div class="src">/.ohm/Ohm/src/run.mli</div><{ocaml:type (- 'context,+ 'result) t}></pre>
+
+<hr/>
+
+<h3>Reading context variables</h3>
+
+<p>Let's consider a quick example: a function which reads the user name from the context and writes it to the log: </p>
+
+<pre><{ocaml:open Ohm
+
+let log_user_name : (< user : string ; .. >, unit) Run.t = 
+  Run.bind  
+    (fun context ->
+      Util.log "User name : %s" (context # user) ; 
+      Run.return ())
+    Run.context}></pre>
+
+<p>Here, <code>Run.context</code> is a run-box which evaluates to the current context object. <code>Run.bind</code> constructs a run-box that evaluates its second parameter (which is a run-box) and passes the result to its first parameter (which is a function that does something, and returns a run-box). <code>Run.return</code> is a function that creates a run-box (that can run in any context) from a normal value.</p> 
+
+<hr/>
+
+<h3>More syntactic sugar</h3>
+
+<p>By using the Ohm syntax extension in conjunction with the Ohm.Universal module, this can be made more readable:</p>
+
+<pre><{ocaml:open Ohm
+open Ohm.Universal
+
+let log_user_name : (< user : string ; .. >, unit) Run.t = 
+  let! context = ohm Run.context in
+  Util.log "User name : %s" (context # user) ;
+  return ()}></pre>
+
+<p><code>ohm x f</code> is defined as <code>Run.bind f x</code>, which is why the two pieces of code are equivalent. In fact, there is an additional improvement provided by Ohm specifically for accessing the current context:</p>
+ 
+<pre><{ocaml:open Ohm
+open Ohm.Universal 
+
+let log_user_name : (< user : string ; .. >, unit) Run.t = 
+  let! user = ohmctx (#user) in
+  Util.log "User name : %s" user ;
+  return ()}></pre>
+
+<p>Here, <code>(#user)</code> is another syntax extension which means <code>(fun x -> x#user)</code>. Ohm.Universal also defines an operator <code>$</code> similar to that of Haskell: <code>f $ x</code> is equivalent to <code>f x</code>, but plays nice with parentheses. Last but not least, there is the <code>ohm_req_or</code> function:</p>
+
+<pre><{ocaml:open Ohm
+
+val get_user : id -> (ctx, user option) Run.t
+
+let user_is_confirmed id = 
+  let! user = ohm_req_or (return false) $ get_user id in 
+  return (user # confirmed)}></pre>
+
+<p><code>ohm_req_or default value callback</code> will evaluate run-box <code>value</code>. If it returns <code>None</code>, then it evaluates and returns <code>default</code>, and if it returns <code>Some x</code>, it evaluates and returns <code>callback x</code>. This function is extremely useful when dealing with functions that read objects from databases, and where the absence of an object must be handled elegantly.</p>
+
+<hr/>
+
+<h3>Changing context variables</h3>
+
+<p>It's possible to add or override context variables, but this is a local change: if a function changes the context, those changes will be visible from all code called from within it, but are undone when it returns.</p>
+
+<p>The main way of editing the context is <code>Run.with_context</code>, which provides a brand new context. The best example of this is defined for you by the framework:</p>
+
+<pre><div class="src">/ocaml/o.ml</div><{ocaml:class ctx adlib = object
+  inherit CouchDB.init_ctx
+  inherit Async.ctx
+  inherit [i18n] AdLib.ctx adlib
+end
+
+let ctx = function
+  | `EN -> new ctx Asset_AdLib.en
+
+let action f req res = Run.with_context (ctx `EN) (f req res) }></pre>
+
+<p>Because of this, <code>action f</code> lets you respond to an HTTP request while in a context where a CouchDB connection, an asynchronous worker and an english internationalization dictionary are available.</p>
+
+<hr/>  
+
+<h3>Concurrency</h3>
+
+<p>The optimization potential of Ohm.Run come from the ability to run several computations in parallel. Keep in mind that this does <b>not</b> involve running threads on multiple cores, but rather the fact that if operation A can run while operation B is blocked by IO.</p>
+
+<p>The <code>Run.list_</code> functions are the primary way of doing so. For instance, if you wish to grab the name and profile picture of every user in a list:</p>
+
+<pre><{ocaml:let user_names_and_pictures uid_list = 
+  Run.list_filter begin fun uid ->
+    let! user    = ohm_req_or (return None) (MUser.get uid) in
+    let! picture = ohm (MPicture.get (user # pid)) in
+    return (Some (user # name, picture)) 
+  end uid_list}></pre>
+
+<p>By using <code>Run.list_filter</code>, a list of name-picture pairs is constructed for all users that could be found in the database.</p>
+
+<p>While the above code looks like it is performing up to two database queries for every user (one inside <code>MUser.get</code> and another inside <code>MPicture.get</code>), the optimization engine actually works with the CouchDB database layer so that only two queries are sent: one query that asks for the data of all users, and one query that asks for the pictures of all users that have one. This lets the developer worry about application features instead of optimizing database requests.</p>
+
+<hr/>
+
 <div class="prev-page">
   Back to : <a href="<{url:tutorials/static.htm}>">Creating Static Pages</a>
 </div>
