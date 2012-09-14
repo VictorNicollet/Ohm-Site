@@ -5,9 +5,8 @@ all:
 	$(OHM) assets # Build all the assets, place them in '/_build' 
 	$(OHM) build  # Build the ocaml code found in '/ocaml', generates '/ocaml/main.byte'
 
-        #Copy the server binary over to the correct path
-	cp ocaml/main.byte www/server 
-	mv www/server www/server.real 
+        # Copy the server binary over to the correct path
+	$(OHM) publish ocaml/main.byte /server.real 
 
         # Perform the deployment
 	www/server.real --put
