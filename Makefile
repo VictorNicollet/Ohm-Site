@@ -5,6 +5,7 @@ all:
 
         # Copy the server binary over to the correct path
 	ohm publish ocaml/main.byte /server.real 
+	chmod a+x www/server.real
 
         # Perform the deployment
 	www/server.real --put
