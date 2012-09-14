@@ -1,0 +1,131 @@
+<h3>OCaml Code Layout</h3>
+
+<p>You will write significant amounts of OCaml code when developing an Ohm application. This code is stored in the <code>/ocaml</code> directory. By default, this directory is created by <code>ohm init</code> and contains several files:</p>
+
+<pre>ocaml/
+
+  <span class=comment># Used during the build process -----------------------------------</span>
+  
+  _tags           <span class=comment># ocamlbuild tags file</span>
+  myocamlbuild.ml <span class=comment># ocamlbuild customization file</span>
+  _build/         <span class=comment># ocamlbuild temporary output</span>
+  
+  ohm/            <span class=comment># symlink to /.ohm/Ohm/ in order to access
+                  # the ohm.cma library and pp.cmo preprocessor</span>
+  
+  plugins/        <span class=comment># contains symlinks to the plugins you 
+                  # have enabled, so they can be seen by ocamlbuild</span>
+  
+  gen/            <span class=comment># symlink to /_build so that assets
+                  # and other files can be seen by ocamlbuild</span>
+
+  main.byte       <span class=comment># executable built by ocamlbuild</span>
+
+  <span class=comment># Typical files in an Ohm project ---------------------------------</span>
+
+  main.ml <span class=comment># root file of the project, used by
+          # ocamlbuild to make main.byte</span>
+
+  o.ml    <span class=comment># defines common values and types used by 
+          # all other files in the project</span>
+
+  <span class=comment># Useful files you might want to delete ---------------------------</span>
+
+  configProject.mli <span class=comment># Defines the project name, as well as any</span>
+  configProject.ml  <span class=comment># other simple configuration values</span>
+
+  cErrorPage.mli    <span class=comment># controller file responsible for showing</span>
+  cErrorPage.ml     <span class=comment># HTTP 404 error pages</span>  
+</pre>
+
+<hr/>
+
+<h3>OCaml Naming Conventions</h3>
+
+<p>
+  How should your OCaml files be named&nbsp;? Consider a simple example: how should code related to <i>invoices</i> be split into files ? 
+</p>
+
+<p><code>IInvoice</code> defines the type of invoice identifiers, which is used to refer to invoices everywhere in the application in a type-safe way.</p>
+
+<p><code>MInvoice</code> defines the actual type of an invoice, any functions that operate on invoices, and any functions that read and store invoices in a database.</p>
+
+<p><code>VInvoice</code> defines any functions and values required to render invoices as HTML (except assets, which are not defined in OCaml code), such as a function that pretty-prints invoice amounts. Most of the time, this module is unnecessary and can be omitted.</p>
+
+<p><code>CInvoice</code> defines what happens when an invoice-related URL is called (generate JSON or HTML content, database changes).</p>
+
+<p><code>UrlInvoice</code> defines all the URLs in your application that are related to invoices, in order to let any part of your application create links to those URLs. In smaller applications, this module can often be omitted.</p>
+
+<p><code>ConfigInvoice</code> defines various configuration elements related to invoices. Quite often, this module is unnecessary and can be omitted.</p>   
+
+<hr/>
+
+<h3>Submodule Naming Convention</h3>
+
+<p>Sometimes, modules grow too large. Keeping in with our invoice example from above, module <code>MInvoice</code> might end up handling create/read/update/delete operations, several list-by-property requests, invoice workflows, audit trails, and so on. Similarly, module <code>CInvoice</code> might start growing because of the many URLs involved in performing all invoice-related operations. 
+</p>
+
+<p>The recommended solution is to slice modules into sub-modules according to the following rules:</p>
+
+<ul>
+  <li>The audit-related features for invoices are implemented in sub-module <code>MInvoice_audit</code> : parent module name, underscore, then camelCase name of the sub-module. </li>
+  <li>Sub-modules are private: a sub-module may only be accessed from its parent module and other sub-modules of its parent module.</li>
+  <li>The line <code>module Audit = MInvoice_audit</code> should <b>always</b> be present at the top of file <code>mInvoice.ml</code>. You may also choose to do so in sub-module implementation files, for your convenience.</li>
+  <li>You may choose to make some parts of a sub-module available from other modules, under the alias <code>MInvoice.Audit</code>. This means that file <code>mInvoice.mli</code> specifies all public invoice-related functionality.</li>
+</ul>
+
+<p>It is possible for sub-modules to have their own sub-modules, which are then sub-sub-modules of the parent module. The same naming conventions apply. 
+</p>
+
+<p>A quick example of how this would play out:</p>
+
+<pre><div class="src">/ocaml/mInvoice.mli</div><{ocaml:open Ohm 
+
+module Audit : sig
+  type action = < user : IUser.t ; time : float >
+  val get_trail : IInvoice.t -> ( # CouchDB.ctx, action list ) Run.t
+end
+
+val create : 
+     self:IUser.t
+  -> amount:float
+  -> ( # CouchDB.ctx, IInvoice.t ) Run.t
+
+val update : 
+     IInvoice.t
+  -> self:IUser.t
+  -> amount:float
+  -> ( # CouchDB.ctx, unit ) Run.t  }></pre>
+
+<pre><div class="src">/ocaml/mInvoice_audit.mli</div><{ocaml:open Ohm
+
+type action = < user : IUser.t ; time : float >
+
+val get_trail : IInvoice.t -> ( # CouchDB.ctx, action list ) Run.t
+
+(* The function below is private : it is not exported by mInvoice.mli *)
+val add_trail : IInvoice.t -> IUser.t -> ( # CouchDB.ctx, unit ) Run.t }></pre>
+
+<pre><div class="src">/ocaml/mInvoice.ml</div><{ocaml:open Ohm
+open Ohm.Universal
+
+module Audit = MInvoice_audit
+
+let create ~self ~amount = 
+  let! id = (* create the invoice *) in 
+  let! () = ohm $ Audit.add_trail id self in
+  return id
+
+let update id ~self ~amount = 
+  let! () = (* update the invoice *) in
+  let! () = ohm $ Audit.add_trail id self in
+  return () }></pre>
+<hr/>
+
+<div class="prev-page">
+  Back to : <a href="<{url:tutorials/run.htm}>">Ohm.Run</a>
+</div>
+
+<div class="next-page">
+  Next : <a href="<{url:tutorials/static.htm}>">Creating Static Pages</a>
+</div>
