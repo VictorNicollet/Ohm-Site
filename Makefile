@@ -12,4 +12,4 @@ all:
 	www/server.real --reset
 
 clean: 
-	$(OHM) clean 
+	ohm clean 
