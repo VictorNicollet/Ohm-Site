@@ -1,1 +1,41 @@
+<h3>What is Ohm ?</h3>
+<p>Ohm is a <b>web framework</b>&nbsp;: a set of libraries and tools that make it easy to create web applications. It is available for free under the open source MIT license. The programming language used for developing Ohm applications is <a href="http://ocaml.org/">OCaml</a>.</p>
+
+<hr/>
+
+<h3>Why OCaml&nbsp;?</h3>
+
+<p><b>OCaml is concise</b>, on par with Python and Ruby. Through a combination of expression-based syntax, first class functions and type inference, OCaml can express complex concepts using very little code while staying very readable.</p>
+
+<p><b>OCaml is fast</b>, on par with C# and Java. While &laquo;&nbsp;do not worry about performance&nbsp;&raquo; might be too strong a statement, it is very likely that most performance issues will come from database access or network latency, and not from programming language overhead.</p>
+
+<p><b>OCaml is safe</b>, on par with Haskell. Not only are the language constructs designed to eliminate the possibility of errors (for instance, there is no possibility of out-of-bounds access for the default collection type), but the compiler will help you detect many more, from basic typos in variable names to missing function arguments to NullReferenceExceptions (which, of course, don't exist at all). And by using signature files to annotate your functions, you can automatically detect many errors that would have taken in-depth unit tests to uncover.</p>  
+
+<p><b>OCaml is practical</b>. Unlike Haskell, OCaml accepts the fact that not everyone can deal with pure functional code all the time. If you need to, OCaml provides you with a variety of reassuring and standard imperative concepts, from loops to variable assignment to hash tables.</p> 
+
+<p>The OCaml language does have its limitations, and Ohm does its best to work around them. For instance, OCaml does not support multi-core parallelism, so Ohm relies on a multiple process architecture. Also, OCaml has a very insufficient standard library, so Ohm includes the Batteries library by default.</p>
+
+<hr/>
+
+<h3>Why not Ocsigen&nbsp;?</h3>
+
+<p>Hopefully, the previous section convinced you that you need a web framework based on OCaml (if it did not, read it again or drop us an e-mail). Why would you choose Ohm over the Ocsigen web server and Eliom web framework, which are also based on OCaml&nbsp;?</p>
+
+<p><b>Ohm is boring</b>. It does not attempt to explore new ways of building web applications, but instead sticks with the traditional approach shared by frameworks from other languages. While Ohm fails to deliver many high-tech features from Ocsigen (such as real-time client-server communication), it focuses on the many boring and low-tech things that are involved in any sizable web application, and strives to make them as palatable as possible for the developer. In particular...</p>
+
+<p><b>Ohm has an asset pipeline</b>. One of the most frequent tasks in a web project is assembling together the copy, HTML, CSS and JS involved in rendering a page. Ohm provides several pipelines for doing so (the standard <code>ohm assets</code>  and the alternate <code>ohm plugins.ohmStatic</code>) as well as many hooks that let you configure specific parts of those pipelines (such as <code>ohm publish</code>).</p> 
+
+<p><b>Ohm has a plugin system</b>. Ohm plugins can perform various operations as part of the build process (such as sending data to a <abbr title="Content Distribution Network">CDN</abbr> or compiling a static site from HTML documents) and provide useful bits of CSS, HTML, JS and OCaml code that can be used by your project. By providing standard procedures, locations and pipelines for most web-related concepts, Ohm makes it easy for a third party plug-in to provide the functionality you need without the need for lengthy configuration.</p>
+
+<hr/>
+
+<h3>The Ohm Architecture</h3>
+<p>Building web applications involves many different hard problems, and many of these have already been solved in very efficient ways. Ohm is <i>not</i> a web server: instead, it sits behind Apache or any FastCGI-enabled server. Ohm does <i>not</i> compile things to CSS or JavaScript: instead, it runs <a href="http://lesscss.org/">LESS</a> or <a href="http://coffeescript.org/">CoffeeScript</a>. Ohm does <i>not</i> manage persistent state, instead it connects to a CouchDB database to do so.</p> 
+
+<p>A typical Ohm application contains two things: <b>OCaml code</b> which describes what the application <i>does</i>, and various HTML, CSS and JS <b>assets</b> that define how the application <i>looks</i>. Both assets and OCaml code are compiled into a set of publicly downloadable assets (CSS, JS, images...) and a single executable called <code>server.real</code>.</p>
+
+<p>The public assets are made available to visitors over the internet through Apache, or they can be uploaded to a CDN.</p>
+
+<p>The executable can be run in various modes. In &laquo;&nbsp;WEB&nbsp;&raquo; mode, it responds to HTTP requests forwarded by a FastCGI server. In &laquo;&nbsp;BOT&nbsp;&raquo; mode, it performs asynchronous, long-lived tasks that are too long for the HTTP request-response cycle. This architecture is highly scalable: you can run as many instances of the executable on as many servers as you want. All these instances communicate together through a CouchDB database cluster.</p>
+
 <img class="diagram" src="<{url:tutorials/architecture.png}>"/>
