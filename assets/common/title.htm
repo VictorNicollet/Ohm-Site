@@ -2,9 +2,9 @@
   <div class="-inner">
     <a href="/" class="-logo"></a>
     <navig>
-      <a href="/tutorials"><span>{`Common_Title_Tutorials}</span></a>
-      <a href="/download"><span>{`Common_Title_Download}</span></a>
-      <a href="/docs"><span>{`Common_Title_Documentation}</span></a>
+      <a href="/tutorials"{if tutorials} class="-s"{/if}><span>{`Common_Title_Tutorials}</span></a>
+      <a href="/download"{if download} class="-s"{/if}><span>{`Common_Title_Download}</span></a>
+      <a href="/docs"{if docs} class="-s"{/if}><span>{`Common_Title_Documentation}</span></a>
     </navig>
   </div>
 </div>
@@ -43,12 +43,20 @@
         border-radius: 8px;
         padding: 9px;
         line-height: 1em;
+        -webkit-transition: background-color 500ms;
+        -moz-transition: background-color 500ms;
+        transition: background-color 500ms;
       }
       &:hover { 
-        text-shadow: none; 
         span { 
-          background-color: #333;
+          background-color: #555;
         } 
+      }
+      &.-s {
+        text-shadow: none; 
+        span {
+          background-color: #333;
+        }
       }
       text-decoration: none;
       display: inline-block;
