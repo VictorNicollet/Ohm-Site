@@ -1,3 +1,5 @@
+<p class="abstract">This page explains what OCaml files are in a new project, and what the recommended OCaml architecture is.</p>
+
 <h3>OCaml Code Layout</h3>
 
 <p>You will write significant amounts of OCaml code when developing an Ohm application. This code is stored in the <code>/ocaml</code> directory. By default, this directory is created by <code>ohm init</code> and contains several files:</p>
@@ -38,8 +40,6 @@
   cErrorPage.ml     <span class=comment># HTTP 404 error pages</span>  
 </pre>
 
-<hr/>
-
 <h3>OCaml Naming Conventions</h3>
 
 <p>
@@ -57,8 +57,6 @@
 <p><code>UrlInvoice</code> defines all the URLs in your application that are related to invoices, in order to let any part of your application create links to those URLs. In smaller applications, this module can often be omitted.</p>
 
 <p><code>ConfigInvoice</code> defines various configuration elements related to invoices. Quite often, this module is unnecessary and can be omitted.</p>   
-
-<hr/>
 
 <h3>Submodule Naming Convention</h3>
 
@@ -120,6 +118,7 @@ let update id ~self ~amount =
   let! () = (* update the invoice *) in
   let! () = ohm $ Audit.add_trail id self in
   return () }></pre>
+
 <hr/>
 
 <div class="prev-page">
