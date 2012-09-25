@@ -6,18 +6,46 @@ open BatPervasives
 
 type sections = [`Download|`Tutorials|`Docs|`Other]
 
+let books = OhmPaging.Book.([
+  make [
+    "tutorials/install.htm", "Installing Ohm" ;
+    "tutorials/build.htm", "The Build Process" ; 
+    "tutorials/run.htm", "Module Ohm.Run"
+  ] 
+])
+
 let render = 
 
-  let page (section:sections) body = Asset_Static_Page.render (object
-    method body = body
-    method head = object
-      method download  = section = `Download
-      method tutorials = section = `Tutorials 
-      method docs      = section = `Docs
-    end
-  end) in
+  let page (section:sections) page =
 
-  let render section = OhmStatic.with_context O.ctx `EN (OhmStatic.wrap (page section)) in
+    let body = page # body in 
+
+    let url = OhmStatic.Exported.url (page # site) (page # req # server) in
+
+    let list = 
+      try Some (BatList.find_map (OhmPaging.Book.list ~url (page # key)) books) 
+      with Not_found -> None 
+    in
+
+    let navig = 
+      try Some (BatList.find_map (OhmPaging.Book.prev_next ~url (page # key)) books) 
+      with Not_found -> None
+    in
+
+    Asset_Static_Page.render (object
+      method body = body
+      method list = list 
+      method navig = navig
+      method head = object
+	method download  = section = `Download
+	method tutorials = section = `Tutorials 
+	method docs      = section = `Docs
+      end
+    end)
+
+  in
+
+  let render section = OhmStatic.with_context O.ctx `EN (OhmStatic.extend (page section)) in
 
   OhmStatic.prefixed_render
     ~default:(render `Other)
@@ -25,4 +53,4 @@ let render =
       "download/"  , render `Download  ;
       "docs/"      , render `Docs      ]
 
-let () = OhmStatic.export ~render ~server:O.server ~title:"Ohm Framework" Static.site
+let _ = OhmStatic.export ~render ~server:O.server ~title:"Ohm Framework" Static.site

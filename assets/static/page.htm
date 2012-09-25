@@ -1,5 +1,29 @@
 {head|Asset_Common_Title.render|ohm} 
-<div id="static">{body|verbatim}</div>
+<div id="static">
+  {?list}
+    <navig class="-main">
+      {#this}
+        <a {if sel} class="-selected"{/if} href="{?url}{this}{/?}">
+	  <span>{pos | succ | string_of_int | esc}. </span>{data}
+	</a>
+      {/#}
+    </navig>
+  {/?}
+  {body|verbatim}
+  {?navig} 
+    <hr/>
+    {?prev}
+      <div class="prev-page"> 
+	{`Static_Prev} <a href="{?url}{this}{/?}">{data}</a>
+      </div>
+    {/?}
+    {?next}
+      <div class="next-page"> 
+	{`Static_Next} <a href="{?url}{this}{/?}">{data}</a>
+      </div>
+    {/?}
+  {/?}
+</div>
 
 <p class="static-foot">
   {`Static_PoweredBy} <a href="/">Ohm Framework</a>
@@ -7,6 +31,28 @@
 
 <style>
 #static {
+  
+  navig.-main {
+    float: right;
+    width: 250px;
+    border: 1px dashed #BBB;
+    padding: 8px 12px;
+    line-height: 24px;
+    a {
+      text-decoration: none;
+      display: block; 
+      color: #45A;
+      span { color: #555; }
+      &.-selected, &:hover.-selected {
+        color: #333;
+        font-weight: bold;
+      }
+      &:hover {
+        color: #67E;
+      }
+    }
+  }
+
   width: 900px;
   margin: auto;
   overflow: hidden;

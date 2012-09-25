@@ -122,12 +122,3 @@ let action f req res = Run.with_context (ctx `EN) (f req res) }></pre>
 
 <p>While the above code looks like it is performing up to two database queries for every user (one inside <code>MUser.get</code> and another inside <code>MPicture.get</code>), the optimization engine actually works with the CouchDB database layer so that only two queries are sent: one query that asks for the data of all users, and one query that asks for the pictures of all users that have one. This lets the developer worry about application features instead of optimizing database requests.</p>
 
-<hr/>
-<div class="prev-page">
-  Back to : <a href="<{url:tutorials/build.htm}>">Building Ohm Applications</a>
-</div>
-
-<div class="next-page">
-  Next : <a href="<{url:tutorials/files/ocaml.htm}>">Project Files : OCaml</a>
-</div>
-

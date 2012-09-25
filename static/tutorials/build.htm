@@ -27,13 +27,3 @@
 <p>The executable is run with a <code>--reset</code> argument, which sends a reset signal through the database. Any running instance of the server will shut down the next time they read the reset signal. This happens before responding to an HTTP request for instances in <code>`Web</code> mode, and once every two seconds for instances in <code>`Bot</code> mode.</p>
 
 <p>The supervision processes (<code>supervise</code> or Apache2 <code>mod_fcgi</code>) will automatically launch new instances when they detect the previous instances have shut down. They will do so using the new server executable, which has been installed by the previous steps.</p>
-
-<hr/>
-
-<div class="prev-page">
-  Back to : <a href="<{url:tutorials/install.htm}>">Installing Ohm</a>
-</div>
-
-<div class="next-page">
-  Next : <a href="<{url:tutorials/run.htm}>">Ohm.Run</a>
-</div>
