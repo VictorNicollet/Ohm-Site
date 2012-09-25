@@ -1,3 +1,5 @@
+<p class="abstract">This page explains the behavior and purpose of the most fundamental module in the Ohm framework. This is required reading&nbsp;!</p>
+
 <h3>What is Ohm.Run ?</h3>
 
 <p>This is the most important concept that you need to understand to use any part of the Ohm Framework. Even if you are familiar with OCaml, you are probably unfamiliar with what Ohm.Run does and why this happens.</p>
@@ -10,8 +12,6 @@
 </ul>
 
 <p>It is somewhat similar to the <a href="http://ocsigen.org/lwt/">LWT</a> pre-emptive threading library.</p>
-
-<hr/>
 
 <h3>The Syntax Extension</h3>
 
@@ -29,8 +29,6 @@ let _ =
 
 <p>In short, <code>let! x = &alpha; in &beta;</code> is completely equivalent to <code>&alpha; (fun x -> &beta;)</code>.</p>
 
-<hr/>
-
 <h3>Context Variables</h3>
 
 <p>There are several pervasive high-level concepts in a web application, such as a database connection or the current internationalization language. It quickly becomes unproductive to pass such pervasive objects as parameters to every function call that might need them at some point, but at the same time making these objects global may cause all code to become non-re-entrant or leak memory.</p>
@@ -38,8 +36,6 @@ let _ =
 <p><code>Ohm.Run</code> lets the programmer define an <b>execution context</b> : a set of values that are required in order to execute a given piece of code or evaluate an expression. The type of a <b>contextual expression</b> or <b>run-box</b> is:
 
 <pre><div class="src">/.ohm/Ohm/src/run.mli</div><{ocaml:type (- 'context,+ 'result) t}></pre>
-
-<hr/>
 
 <h3>Reading context variables</h3>
 
@@ -55,8 +51,6 @@ let log_user_name : (< user : string ; .. >, unit) Run.t =
     Run.context}></pre>
 
 <p>Here, <code>Run.context</code> is a run-box which evaluates to the current context object. <code>Run.bind</code> constructs a run-box that evaluates its second parameter (which is a run-box) and passes the result to its first parameter (which is a function that does something, and returns a run-box). <code>Run.return</code> is a function that creates a run-box (that can run in any context) from a normal value.</p> 
-
-<hr/>
 
 <h3>More syntactic sugar</h3>
 
@@ -92,8 +86,6 @@ let user_is_confirmed id =
 
 <p><code>ohm_req_or default value callback</code> will evaluate run-box <code>value</code>. If it returns <code>None</code>, then it evaluates and returns <code>default</code>, and if it returns <code>Some x</code>, it evaluates and returns <code>callback x</code>. This function is extremely useful when dealing with functions that read objects from databases, and where the absence of an object must be handled elegantly.</p>
 
-<hr/>
-
 <h3>Changing context variables</h3>
 
 <p>It's possible to add or override context variables, but this is a local change: if a function changes the context, those changes will be visible from all code called from within it, but are undone when it returns.</p>
@@ -112,8 +104,6 @@ let ctx = function
 let action f req res = Run.with_context (ctx `EN) (f req res) }></pre>
 
 <p>Because of this, <code>action f</code> lets you respond to an HTTP request while in a context where a CouchDB connection, an asynchronous worker and an english internationalization dictionary are available.</p>
-
-<hr/>  
 
 <h3>Concurrency</h3>
 
