@@ -1,3 +1,5 @@
+<p class="abstract">This page introduces the ohmStatic plug-in used to publish a site made of static HTML-formatted text and downloadable files.</p>  
+
 <h3>Why static pages</h3>
 
 <p>Static pages are the easiest way to get HTML displayed on a visitor's screen, but this comes at the cost of making it harder to use dynamic content on these pages, including variables coming from the database or internationalization.</p>
@@ -13,8 +15,6 @@
 
 <p>While the heart of a static page is a large block of HTML, you are allowed to make the surrounding HTML dynamic. This includes rendering links to the previous or next article, or manipulating a comments feed below an article.</p>
 
-<hr/>
-
 <h3>Enabling static pages</h3>
 
 <p>To publish static pages, you need to install the corresponding plugin. Run this command in the root directory of your project:</p>
@@ -26,8 +26,6 @@
 <pre><div class="src">/static/index.htm</div>&lt;p>Hello, world&nbsp;!&lt;/p></pre>
 
 <p>Many ohm plugins have a <abbr title="Do What I Mean">DWIM</abbr> running mode which is executed for all enabled plugins when the project build process begins. The DWIM mode of the <em>ohmStatic</em> plugin recursively explores the <code>/static</code> directory in the project root, and turns any files found inside into either pages (for the <em>.htm</em>, <em>.html</em> and <em>.md</em> extensions) or downloadable files (any other extensions). </p>
-
-<hr/>
 
 <h3>Displaying static pages</h3>
 
@@ -42,7 +40,7 @@
 
 <pre><div class="src">ocaml/main.ml</div><span class="light">module Controllers = struct
   open CErrorPage</span>
-<{ocaml:  open CStatic}>
+<{ocaml:  open CStatic           (* <-- Add this line *)}>
 <span class="light">end</span></pre>
 
 <p>These additions will do the following:</p>
@@ -54,8 +52,6 @@
 </ul>
 
 <p>Once this is done, run <code>make</code> in the project root, and visit <a href="http://ice-cream.local">http://ice-cream.local</a> in your web browser to see the new static page appear (you may need to refresh your page before it appears).</p>
-
-<hr/>
 
 <h3>URL mapping</h3>
 
@@ -91,8 +87,6 @@ let _ = OhmStatic.export
   ~server:  O.server  
   ~title:   "My Example Page"
   Static.site}></pre>
-
-<hr/>
 
 <h3>Page links</h3>
 
