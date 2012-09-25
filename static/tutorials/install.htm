@@ -1,3 +1,7 @@
+<p class="abstract">
+  This page explains how to install, set up and configure an application using Ohm Framework. From scratch. 
+</p>
+
 <h3>Installing Dependencies</h3>
 
 <p>Ohm requires OCaml 3.12.0 to be installed, as well as <b>ocamlbuild</b>, <b>ocamlfind</b> and <b>Batteries</b>. Its asset pipeline (the part that generates CSS and JavaScript from your assets) relies on <b>CoffeeScript</b> and <b>LESS CSS</b>. By default, it relies on <b>CouchDB</b> for persistence. The asynchronous processing relies on the <b>supervise</b> tool. If you are running Debian, or a Debian-compatible distribution, you can use the following command to fetch all required packages:</p>
@@ -6,9 +10,7 @@
     ocaml-native-compilers libsha-ocaml-dev libbatteries-ocaml-dev \
     libocamlnet-ocaml-dev libcurl-ocaml-dev libxmlm-ocaml-dev \
     libapache2-mod-fastcgi make couchdb coffeescript node-less \
-    supervise</pre> 
-
-<hr/>
+    daemontools</pre> 
 
 <h3>Installing the command-line tool</h3>
 
@@ -23,8 +25,6 @@ sudo ./install.sh</pre>
 
 <pre><span class=light>Ohm installed !
 Run 'ohm init &lt;directory&gt;' to create a new project</span></pre>
-
-<hr/>
 
 <h3>Creating a new project</h3>
 
@@ -43,8 +43,6 @@ Run 'ohm init &lt;directory&gt;' to create a new project</span></pre>
 
 <p>Once this is done, your web application is almost ready. There are only two more steps to be done, which are discussed in the next two sections.</p>
 
-<hr/>
-
 <h3>Configuring Apache2</h3>
 
 <p>Ohm sould be compatible with any FastCGI-capable web server, but it has only been tested with Apache 2.2 so far. The <code>ohm</code> tool can generate a fresh <i>vhost</i> configuration for you:</p>
@@ -59,8 +57,6 @@ sudo service apache2 reload</pre>
 <pre>sudo echo <span class=string>'127.0.0.1 ice-cream.local'</span> > /etc/hosts</pre>
 
 <p>You can now fire up your web browser and visit <code>http://ice-cream.local/</code>: if everything worked, you should see a 404 Not Found page.</p>
-
-<hr/>
 
 <h3>Running the Asynchronous Worker</h3>
 
