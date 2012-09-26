@@ -17,15 +17,17 @@
 
 <p>Ohm.Run is used in a monadic style. If you do not know what this means, just ignore the previous sentence. In order to make this style readable in OCaml, Ohm provides a very simple syntax extension based on the camlp4 preprocessor:</p>
 
-<pre><{ocaml:val callback : (string -> 'a) -> 'a
+<pre><{ocaml:open BatFile
+open BatIO 
 
 (* Standard OCaml syntax *)
-let _ = callback print_endline
+with_file_out "out.txt" (fun channel ->
+  nwrite "Hello, world!\n" channel
+)
 
 (* Ohm syntax *)
-let _ = 
-  let! line = callback in 
-  print_endline line}></pre>
+let! channel = with_file_out "out.txt" in
+nwrite "Hello, world!\n" channel}></pre>
 
 <p>In short, <code>let! x = &alpha; in &beta;</code> is completely equivalent to <code>&alpha; (fun x -> &beta;)</code>.</p>
 
