@@ -31,6 +31,14 @@
 
 <style>
 #static {
+
+  h1.-center {
+    color: #333;
+    font-size: 32px;
+    margin: 40px 0;
+    text-align: center;
+    text-shadow: 0 1px 0 white;
+  }
   
   navig.-main {
     float: right;
@@ -144,6 +152,39 @@
     display: block;
     border: 1px solid #BBB;
     box-shadow: 0 0 6px #888;
+  }
+
+  ul.-features {
+    list-style-type: none;
+    margin: auto;
+    padding: 0;
+    width: 600px;
+    h4 {
+      color: #555555;
+      font-size: 20px;
+      margin: 20px 0 5px;
+    }
+  }
+  
+  .call-to-action {
+    text-align: center;
+    display: block;
+    margin: 20px auto;
+    width: 180px;
+    background-color: #4C4;
+    border: 1px solid #070;
+    border-radius: 8px;
+    box-shadow: inset 0 0 20px #2A2;
+    color: white; 
+    text-shadow: 0 -1px 0 #070;
+    font-weight: bold;
+    font-size: 20px;
+    padding: 4px 0;
+    text-decoration: none;
+    &:hover {
+      background-color: #5D5;   
+      box-shadow: inset 0 0 15px #3B3;
+    }
   }
 }
 
