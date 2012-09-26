@@ -2,12 +2,13 @@
   h2.-docs {
     margin: 0 0 20px; 
     font-size: 24px;
-    color: #888;
-    font-family: 'Droid Sans Mono','Courier New',monospace;
+    color: #555;
     font-weight: normal;
+    border-left: 66px solid #999;
+    padding-left: 16px;
+    height: 33px;
     strong {
-      font-weight: normal;
-      color: black;
+      color: #333;
     }
     a {
       color: #248;
