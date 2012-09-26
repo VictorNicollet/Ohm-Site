@@ -1,0 +1,17 @@
+#static {
+  h2.-docs {
+    margin: 0 0 20px; 
+    font-size: 24px;
+    color: #888;
+    font-family: 'Droid Sans Mono','Courier New',monospace;
+    font-weight: normal;
+    strong {
+      font-weight: normal;
+      color: black;
+    }
+    a {
+      color: #248;
+      &:hover { color: #136; text-decoration: none; }
+    }
+  }
+}
