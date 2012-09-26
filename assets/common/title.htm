@@ -1,11 +1,11 @@
 <div id="head">
   <div class="-inner">
     <a href="/" class="-logo"></a>
-    <navig>
+    <div class="-navig">
       <a href="/tutorials"{if tutorials} class="-s"{/if}><span>{`Common_Title_Tutorials}</span></a>
       <a href="/download"{if download} class="-s"{/if}><span>{`Common_Title_Download}</span></a>
       <a href="/docs"{if docs} class="-s"{/if}><span>{`Common_Title_Documentation}</span></a>
-    </navig>
+    </div>
   </div>
 </div>
 
@@ -32,7 +32,7 @@
     background: url(/logo.png) center center no-repeat transparent;
   }
 
-  navig {
+  .-navig {
     float: right;
     font-weight: bold;
     a { 
