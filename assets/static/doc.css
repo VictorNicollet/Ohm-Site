@@ -1,4 +1,8 @@
 #static {
+  .docs {
+    width: 600px;
+    margin: auto; 
+  }
   h2.-docs {
     margin: 0 0 20px; 
     font-size: 24px;
