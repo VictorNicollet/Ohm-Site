@@ -1,5 +1,92 @@
+<div class="docs">
+  
 <h2 class="-docs">module <a href="<{url:docs/index.htm}>">Ohm</a>.<strong>Action</strong></h2>
 
 <p>
-  
+  This module represents several concepts related to the HTTP request-response cycle, and 
+  provides functions to work with these concepts.
 </p>
+
+<ul>
+  <li><a href="#action">Actions</a> are functions triggered by incoming HTTP requests.</li>
+  <li><a href="#request">Requests</a> represent all the data received by the server during an HTTP request.</li>
+  <li><a href="#response">Responses</a> are built by the application and sent back to the client.</li>
+  <li><a href="#server">Servers</a> let you handle several domains from within a single application.</li>
+  <li><a href="#endpoint">Endpoints</a> turn registered actions into actual URLs.</li>
+  <li><a href="#convenience">Convenience</a> functions are generally helpful.</li>
+</ul>
+
+<a name="action"></a><h3>Actions</h3>
+
+<p>
+  An action is a function that describes how to handle an incoming HTTP request. Actions implement type <a href="<{url:Ohm.Action.t.htm}>"><code>Action.t</code></a> : they receive a <a href="#request">request</a> object and a default <a href="#response">response</a> as a parameter, and they return an <a href="<{url:docs/index.htm}>">run-box</a> that evaluates to a response. 
+</p>
+
+<div class="example">
+  <p><b>Example</b>: an action that returns the JSON object <code>{ok:true}</code>.</p>
+  
+  <pre><{ocaml:open Ohm
+open Ohm.Universal
+
+fun request response -> 
+  return (Action.json ["ok", Json.Bool true] response)}></pre>
+</div>
+
+<p>
+  When the application runs in web server mode, it must decide what action should handle each HTTP request, and it does so by using the dispatcher built into the Ohm framework. Actions are added to the dispatcher using the <a href="<{url:Ohm.Action.register.htm}>"><code>register</code></a> or <a href="<{url:Ohm.Action.declare.htm}>"><code>declare</code></a> functions. 
+</p>
+
+<div class="example">
+  <p><b>Example</b>: registering an action on the default server <a href="#servers"><code>O.server</code></a> with path <code>foo/bar</code> and no arguments.</p>
+
+  <pre><{ocaml:open Ohm
+open Ohm.Universal 
+
+let _ = Action.register O.server "foo/bar" Action.Args.none
+  (fun req res -> return (Action.json ["ok", Json.Bool true] res))}></pre>
+
+  <pre>http://example.com/foo/bar <span class="comment">==&gt; {ok:true}</span>
+</div>
+
+<p>
+  Actions may expect arguments, which are provided by the client as part of the URL. This process is detailed in the documentation for module <a href="<{url:docs/Ohm.Action.Args.htm}>"><code>Action.Args</code></a>.
+</p>
+
+<div class="example">
+  <p><b>Example</b>: define an action which expects an optional floating-point argument, and returns a JSON value that includes the provided argument.</p>
+  
+  <pre><{ocaml:open Ohm
+open Ohm.Universal
+
+let _ = Action.register O.server "test" Action.Args.(o float) 
+  (fun req res -> 
+     let value = Json.of_opt Json.of_float (req # args) in
+     return (Action.json ["value", value] res))}></pre>
+
+  <pre>http://example.com/test     <span class="comment">==&gt; {value:null}</span>
+http://example.com/test/1.5 <span class="comment">==&gt; {value:1.5}</span></pre>
+</div>
+
+<p>
+  The dispatcher follows these rules when determining what action to use: 
+</p>
+
+<ol>
+  <li><p>Eliminate all actions where the server does not match the domain and protocol of the incoming HTTP request.</p></li>
+  <li><p>Eliminate all actions where the (path + args) does not match the entire URL of the HTTP request.</p></li>
+  <li><p>If there are no actions left, raise <a href="<{url:Ohm.Action.Action_not_found.htm}>"><code>Action_not_found</code></a></p></li>
+  <li><p>Return the action with the longest path.</p></li>
+</ol>
+
+<p>If two actions are registered for <code>/test/admin</code> and <code>/test/[string]</code>, then a request with URL <code>/test/admin</code> will be mapped to action 1 even though both actions would match it.
+</p>
+
+<a name="request"></a><h3>Requests</h3>
+
+<a name="response"></a><h3>Responses</h3>
+
+<a name="server"></a><h3>Servers</h3>
+
+<a name="convenience"></a><h3>Convenience</h3>
+
+</div>
