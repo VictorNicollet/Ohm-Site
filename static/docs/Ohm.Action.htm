@@ -74,11 +74,14 @@ http://example.com/test/1.5 <span class="comment">==&gt; {value:1.5,code:[]}</sp
 <ol>
   <li><p>Eliminate all actions where the server does not match the domain and protocol of the incoming HTTP request.</p></li>
   <li><p>Eliminate all actions where the (path + args) does not match the entire URL of the HTTP request.</p></li>
-  <li><p>If there are no actions left, raise <a href="<{url:Ohm.Action.Action_not_found.htm}>"><code>Action_not_found</code></a></p></li>
+  <li><p>If there are no actions left, use the action registered with <a href="<{url:docs/Ohm.Action.register_404.htm}>"><code>register_404</code></a> or raise <a href="<{url:Ohm.Action.Action_not_found.htm}>"><code>Action_not_found</code></a></p></li>
   <li><p>Return the action with the longest path.</p></li>
 </ol>
 
 <p>If two actions are registered for <code>/test/admin</code> and <code>/test/[string]</code>, then a request with URL <code>/test/admin</code> will be mapped to action 1 even though both actions would match it.
+</p>
+
+<p>
 </p>
 
 <a name="request"></a><h3>Requests</h3>
@@ -89,7 +92,7 @@ http://example.com/test/1.5 <span class="comment">==&gt; {value:1.5,code:[]}</sp
 
 <p>The ultimate objective of an action is to construct an HTTP response that will be sent back to the client. To do so, it manipulates a response that is "under construction", represented by abstract immutable type <code>Action.response</code>.</p>
 
-<p>The action receives a default HTTP response as a parameter. This is usually an empty JSON response, so returning it straight away will send <code>{code:[]}</code> to the client. </p>
+<p>The action receives a default HTTP response as a parameter. This is usually an empty JSON response, so returning it straight away will send <code>{code:[]}</code> to the client.</p>
 
 <p>Use the following functions to transform the response object into what you want it to be:</p>
 
@@ -101,9 +104,16 @@ http://example.com/test/1.5 <span class="comment">==&gt; {value:1.5,code:[]}</sp
   <li><a href="<{url:docs/Ohm.Action.file.htm}>"><code>Action.file</code></a> responds with a downloadable file.</li>
   <li><a href="<{url:docs/Ohm.Action.javascript.htm}>"><code>Action.javascript</code></a> adds some JS code to the response.</li>
   <li><a href="<{url:docs/Ohm.Action.with_cookie.htm}>"><code>Action.with_cookie</code></a> adds a cookie to the response.</li>
+</ul>
 
 <a name="server"></a><h3>Servers</h3>
 
+<p>A typical web application may have to handle several domain names over both HTTP and HTTPS. Action servers help restrict actions to specific domains, ports and protocols.</p>
+
+<p>Action servers implement the <a href="<{url:docs/Ohm.Action.server.htm}>"><code>Action.server</code></a> class type. Typical Ohm projects include a default server <code>O.server</code> that matches HTTP requests on port 80 for the project's domain name. If you need more complex behavior, see the <a href="#convenience">convenience functions</a> below for simple ways of defining servers.</p>
+
 <a name="convenience"></a><h3>Convenience</h3>
+
+<p>Convenience functions help with redundant aspects of action manipulation. They are defined in module <a href="<{url:docs/Ohm.Action.Convenience.htm}>"><code>Action.Convenience</code></a> 
 
 </div>
