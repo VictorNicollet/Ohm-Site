@@ -45,7 +45,7 @@ open Ohm.Universal
 let _ = Action.register O.server "foo/bar" Action.Args.none
   (fun req res -> return (Action.json ["ok", Json.Bool true] res))}></pre>
 
-  <pre>http://example.com/foo/bar <span class="comment">==&gt; {ok:true}</span>
+  <pre>http://example.com/foo/bar <span class="comment">==&gt; {ok:true,code:[]}</span>
 </div>
 
 <p>
@@ -63,8 +63,8 @@ let _ = Action.register O.server "test" Action.Args.(o float)
      let value = Json.of_opt Json.of_float (req # args) in
      return (Action.json ["value", value] res))}></pre>
 
-  <pre>http://example.com/test     <span class="comment">==&gt; {value:null}</span>
-http://example.com/test/1.5 <span class="comment">==&gt; {value:1.5}</span></pre>
+  <pre>http://example.com/test     <span class="comment">==&gt; {value:null,code:[]}</span>
+http://example.com/test/1.5 <span class="comment">==&gt; {value:1.5,code:[]}</span></pre>
 </div>
 
 <p>
@@ -83,7 +83,24 @@ http://example.com/test/1.5 <span class="comment">==&gt; {value:1.5}</span></pre
 
 <a name="request"></a><h3>Requests</h3>
 
+<p>When an HTTP request is received, an object representing that request is passed to the triggered <a href="#action">action</a>. Request objects implement the class type <a href="<{url:docs/Ohm.Action.request.htm}>"><code>Action.request</code></a> 
+
 <a name="response"></a><h3>Responses</h3>
+
+<p>The ultimate objective of an action is to construct an HTTP response that will be sent back to the client. To do so, it manipulates a response that is "under construction", represented by abstract immutable type <code>Action.response</code>.</p>
+
+<p>The action receives a default HTTP response as a parameter. This is usually an empty JSON response, so returning it straight away will send <code>{code:[]}</code> to the client. </p>
+
+<p>Use the following functions to transform the response object into what you want it to be:</p>
+
+<ul>
+  <li><a href="<{url:docs/Ohm.Action.page.htm}>"><code>Action.page</code></a> responds with an HTML page.</li>
+  <li><a href="<{url:docs/Ohm.Action.json.htm}>"><code>Action.json</code></a> responds with some JSON.</li>
+  <li><a href="<{url:docs/Ohm.Action.jsonp.htm}>"><code>Action.jsonp</code></a> responds using the JSONP protocol.</li>
+  <li><a href="<{url:docs/Ohm.Action.redirect.htm}>"><code>Action.redirect</code></a> responds with a 303 See Other.</li>
+  <li><a href="<{url:docs/Ohm.Action.file.htm}>"><code>Action.file</code></a> responds with a downloadable file.</li>
+  <li><a href="<{url:docs/Ohm.Action.javascript.htm}>"><code>Action.javascript</code></a> adds some JS code to the response.</li>
+  <li><a href="<{url:docs/Ohm.Action.with_cookie.htm}>"><code>Action.with_cookie</code></a> adds a cookie to the response.</li>
 
 <a name="server"></a><h3>Servers</h3>
 
