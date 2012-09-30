@@ -16,7 +16,7 @@
   <li><a href="#convenience">Convenience</a> functions are generally helpful.</li>
 </ul>
 
-<a name="action"></a><h3>Actions</h3>
+<h3><a name="action"></a>Actions</h3>
 
 <p>
   An action is a function that describes how to handle an incoming HTTP request. Actions implement type <a href="<{url:docs/Ohm.Action.t.htm}>"><code>Action.t</code></a> : they receive a <a href="#request">request</a> object and a default <a href="#response">response</a> as a parameter, and they return an <a href="<{url:docs/index.htm}>">run-box</a> that evaluates to a response. 
@@ -84,11 +84,11 @@ http://example.com/test/1.5 <span class="comment">==&gt; {value:1.5,code:[]}</sp
 <p>
 </p>
 
-<a name="request"></a><h3>Requests</h3>
+<h3><a name="request"></a>Requests</h3>
 
 <p>When an HTTP request is received, an object representing that request is passed to the triggered <a href="#action">action</a>. Request objects implement the class type <a href="<{url:docs/Ohm.Action.request.htm}>"><code>Action.request</code></a> 
 
-<a name="response"></a><h3>Responses</h3>
+<h3><a name="response"></a>Responses</h3>
 
 <p>The ultimate objective of an action is to construct an HTTP response that will be sent back to the client. To do so, it manipulates a response that is "under construction", represented by abstract immutable type <code>Action.response</code>.</p>
 
@@ -106,13 +106,13 @@ http://example.com/test/1.5 <span class="comment">==&gt; {value:1.5,code:[]}</sp
   <li><a href="<{url:docs/Ohm.Action.with_cookie.htm}>"><code>Action.with_cookie</code></a> adds a cookie to the response.</li>
 </ul>
 
-<a name="server"></a><h3>Servers</h3>
+<h3><a name="server"></a>Servers</h3>
 
 <p>A typical web application may have to handle several domain names over both HTTP and HTTPS. Action servers help restrict actions to specific domains, ports and protocols.</p>
 
 <p>Action servers implement the <a href="<{url:docs/Ohm.Action.server.htm}>"><code>Action.server</code></a> class type. Typical Ohm projects include a default server <code>O.server</code> that matches HTTP requests on port 80 for the project's domain name. If you need more complex behavior, see the <a href="#convenience">convenience functions</a> below for simple ways of defining servers.</p>
 
-<a name="convenience"></a><h3>Convenience</h3>
+<h3><a name="convenience"></a>Convenience</h3>
 
 <p>Convenience functions help with redundant aspects of action manipulation. They are defined in module <a href="<{url:docs/Ohm.Action.Convenience.htm}>"><code>Action.Convenience</code></a> 
 
