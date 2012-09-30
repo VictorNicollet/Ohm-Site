@@ -109,6 +109,34 @@ http://example.com/test/1.5 <span class="comment">==&gt; {value:1.5,code:[]}</sp
 
 <p>Action servers implement the <a href="<{url:docs/Ohm.Action.server.htm}>"><code>Action.server</code></a> class type. Typical Ohm projects include a default server <code>O.server</code> that matches HTTP requests on port 80 for the project's domain name. If you need more complex behavior, see the <a href="#convenience">convenience functions</a> below for simple ways of defining servers.</p>
 
+<h3><a name="endpoint"></a>Endpoints</h3>
+
+<p>Endpoints are simple, type-safe ways of creating URLs that will be mapped to specific registered actions. In particular, endpoints let you specify the server instance and the request arguments contained in the HTTP request received by the target actions.</p>
+
+<p>Endpoints are represented by abstract type <code>Action.endpoint</code>. They are returned by the action registration functions <a href="<{url:docs/Ohm.Action.register.htm}>"><code>register</code></a> and <a href="<{url:docs/Ohm.Action.declare.htm}>"><code>declare</code></a>.</p>
+
+<p>Use function <a href="<{url:docs/Ohm.Action.url.htm}>"><code>Action.url</code></a> to create an URL from an endpoint.</p>
+
+<div class="example">
+  <p><b>Example</b>: consider an action which takes a string parameter representing an URL, and redirects the client to that URL. How might we construct an URL which points to that action such that we are redirected to <code>http://ohm-framework.com</code> ?</p>
+
+  <pre><{ocaml:open Ohm
+open Ohm.Universal
+
+let redirect req res = 
+  return (Action.redirect (req # args) res) 
+
+let endpoint = 
+  Action.register O.server "r" Action.Args.(r string) redirect
+
+let url = 
+  Action.url endpoint () "http://ohm-framework.com"
+
+(* Assuming the domain for O.server is ice-cream.local : *)
+val url : string = "http://ice-cream.local/r/http%3A%2F%2Fohm-framework.com"}></pre>
+
+</div>
+
 <h3><a name="convenience"></a>Convenience</h3>
 
 <p>Convenience functions help with redundant aspects of action manipulation. They are defined in module <a href="<{url:docs/Ohm.Action.Convenience.htm}>"><code>Action.Convenience</code></a> 
