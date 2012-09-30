@@ -1,0 +1,97 @@
+<div class="docs">
+
+  <h2 class="-docs">class type <a href="<{url:docs/index.htm}>">Ohm</a>.<a href="<{url:docs/Ohm.Action.htm}>">Action</a>.<strong>server</strong></h2>
+
+  <pre><{ocaml:class type ['instance] server = object
+  method protocol : [`HTTP|`HTTPS]
+  method domain : 'instance -> string
+  method port : 'instance -> int
+  method cookie_domain : string option 
+  method matches : [`HTTP|`HTTPS] -> string -> int -> 'instance option
+end}></pre>
+
+  <p>
+    A server is a way of filtering protocol-domain-port combinations : an <a href="<{url:docs/Ohm.Action.htm}>#action">action</a> bound to a server will only be triggered if the protocol-domain-port of the incoming request is accepted by the server's <code>matches</code> method.  
+  </p>
+
+  <p>
+    The protocol-domain-port is represented by an <b>instance</b> that is passed to the action as part of its <a href="<{url:docs/Ohm.Action.request.htm}>"><code>Action.request</code></a> argument. The type of this instance is decided by the server object : if a server represents all subdomains of <code>*.example.com</code>, then the instance could be a string representing the prefix : <code>"www"</code> for <code>www.example.com</code>. This lets the action perform distinct actions for every distinct sub-domain. 
+  </p>
+
+  <p>
+    The server also provides the reverse operation : given an instance, it returns the protocol, domain and port that would match that instance using methods <code>protocol</code>, <code>domain</code> and <code>port</code>.
+  </p>
+
+  <h3>Matching requests</h3>
+
+  <p>The <code>matches</code> method is called by the dispatcher when a new request is received.</p>
+
+  <div class="example">
+    <p><b>Example</b>: if a request is received for <code>https://example.com:8080/test</code>, then the following call would take place:
+    </p>
+    <pre><{ocaml:server # matches `HTTPS "example.com" 8080}></pre>
+  </div>
+
+  <p>
+    If the server does not handle the protocol-domain-port combination, it should return <code>None</code> and otherwise, it should return <code>Some i</code> where <code>i</code> is an instance representing the match in a relevant way &mdash; what is relevant is up to the developer, so <code>Some ()</code> is perfectly valid.
+  </p>
+
+  <h3>Constructing the URL base</h3>
+  
+  <p>
+    The <code>protocol</code> method should return the preferred access protocol for the server &mdash; HTTP or HTTPS. 
+  </p>
+  
+  <p>
+    The <code>domain</code> method should return a string representation of the domain that corresponds to the provided instance.
+  </p>
+
+  <p>
+    The <code>port</code> method should return an integer representation of the port that corresponds to the provided instance.
+  </p>
+
+  <div class="example">
+    <p><B>Example</b>: assume that <code>server</code> represents all subdomains of <code>http://*.example.com</code> on the default port. 
+    </p>
+    <pre><{ocaml:server # protocol 
+val - : [`HTTP|`HTTPS] = `HTTP
+
+server # domain "www"
+val - : string = "www.example.com"
+
+server # port "www"
+val - : int = 80}></pre>
+  </div>
+
+  <h3>Cookie domain</h3>
+
+  <p>
+    You might wish to share cookies between several instances of a given server. For example, you might want <code>login.example.com</code> to set a cookie that can then be read by <code>account.example.com</code>.
+</p>
+
+  <p>
+    Quick reminder about how HTTP works : every HTTP cookie carries with it a domain identifier that restricts which domains will receive a copy of the cookie. A cookie with the domain restriction <code>login.example.com</code> will not be received by <code>account.example.com</code>, but a cookie with domain restriction <code>.example.com</code> will.  
+  </p>
+
+  <p>
+    The server's <code>cookie_domain</code> method returns a string representation of the domain restriction used by all cookies set by actions on that server. It may also return <code>None</code>, which will restrict cookies to the request domain. 
+  </p>
+
+  <div class="example">
+    <p><b>Example</b>: again, assume <code>server</code> represents all subdomains of <code>*.example.com</code>, and we wish to make all cookies available across all subdomains.  </p>
+    <pre><{ocaml:server # cookie_domain
+val - : string option = Some ".example.com"}></pre>
+  </div>
+
+  <h3>Convenience</h3>
+
+  <p>
+     The convenience module provides functions <a href="<{url:docs/Ohm.Action.Convenience.single_domain_server.htm}>"><code>single_domain_server</code></a> and <a href="<{url:docs/Ohm.Action.Convenience.sub_domain_server.htm}>"><code>sub_domain_server</code></a> which cover the two most typical uses of servers.
+  </p>
+
+  <p>
+    By default, <code>O.server</code> is defined for you to be a single-domain server handling the 
+    project's default domain &mdash; <code>[your-project-name].local</code>.
+  </p>
+
+</div>
