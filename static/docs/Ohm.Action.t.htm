@@ -1,0 +1,26 @@
+<div class="docs">
+  <h2 class="-docs">type <a href="<{url:docs/index.htm}>">Ohm</a>.<a href="<{url:docs/Ohm.Action.htm}>">Action</a>.<strong>t</strong></h2>
+
+  <pre><{ocaml:type ('server,'args) t = 
+      ('server,'args) request
+   -> response
+   -> (unit,response) Ohm.Run.t}></pre>
+
+  <p>An <b>action</b> is a function which explains how an HTTP request is turned into an HTTP response. It receives the HTTP request as its first parameter (as a <a href="<{url:docs/Ohm.Action.request.htm}>"><code>request</code></a>). It receives a default response as its second parameter, and must <a href="<{url:docs/Ohm.Action.htm}>#response">transform it</a> into the actual response.</p>
+
+  <p>The action's result is wrapped in the asynchronous processing monad defined by module <a href="<{url:docs/Ohm.Run.htm}>"><code>Ohm.Run</code></a>.</p>
+
+  <p>The request contains the server instance (of type <code>'server</code>) and the URL arguments (of type <code>'args</code>).</p>
+
+  <div class="example">
+    <p><b>Example</b>: an action which expects a single URL argument of type string, and redirects the visitor to that URL.</p>
+
+    <pre><{ocaml:open Ohm
+open Ohm.Universal 
+
+let redirect req res =
+  return (Action.redirect (req # args) res)}></pre>
+    
+  </div>
+
+</div>
