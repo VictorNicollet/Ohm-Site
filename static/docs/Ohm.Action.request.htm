@@ -1,0 +1,70 @@
+<div class="docs">
+  <h2 class="-docs">class type <a href="<{url:docs/index.htm}>">Ohm</a>.<a href="<{url:docs/Ohm.Action.htm}>">Action</a>.<strong>request</strong></h2>
+
+  <p>This class type represents the relevant information from an incoming HTTP request. It is provided as a first argument to every action. Class type signature: </p>
+
+  <pre><{ocaml:class type ['server,'args] request = object
+  method self : ('server,'args) endpoint
+  method server : 'server
+  method args : 'args
+  method path : string  
+  method post : [ `JSON of Json.t | `POST of (string,string) BatPMap.t ] option
+  method get : string -> string option 
+  method cookie : string -> string option
+end}></pre>
+
+  <h3>self</h3>
+
+  <p><code>req # self</code> is the <a href="<{url:docs/Ohm.Action.htm}>#endpoint">endpoint</a> of the current action, and lets the action generate its own URL (for instance, when creating "next page" and "previous page" links).</p>
+
+  <h3>server, args, path and get</h3>
+
+  <p><code>req # server</code> and <code>req # args</code> represent the information parsed from the HTTP request by the <a href="<{url:docs/Ohm.Action.htm}>#server">server</a> and the <a href="<{url:docs/Ohm.Action.Args.htm}>">arguments</a>, respectively.</p>
+
+  <p><code>req # path</code> contains the entire path extracted from the URL (ignoring initial and trailing slashes as well as the query string).</p>
+
+  <p><code>req # get</code> accesses individual GET parameters from the query string.</p>
+
+  <div class="example">
+    <p><b>Example</b>: assume that <code>s : string server</code> matches subdomains of <code>*.example.com</code> (with an instance being represented by the subdomain), and that an action was registered with the code below:</p>
+    <pre><{ocaml:let _ = Action.register s "test" Action.Args.(n string) 
+  (fun req res -> (* ... *))}></pre>
+    <p>If a request happens on URL <code>http://www.example.com/test/a/b/?c=d</code>, then:</p>
+    <pre><{ocaml:req # server
+val - : string = "www"
+
+req # args
+val - : string list = ["a";"b"]
+
+req # path 
+val - : string = "test/a/b"
+
+req # get "c"
+val - : string option = Some "d"
+
+req # get "z"
+val - : string option = None}></pre> 
+  </div>
+
+  <h3>cookie</h3>
+
+  <p>Extracts the value of a cookie, if set, otherwise returns <code>None</code>.</p>
+
+  <div class="example">
+    <p><b>Example</b>: assume that the browser sent cookie <code>SESSION=0Z23yB</code> and no other cookies.</p>
+    <pre><{ocaml:req # cookie "SESSION"
+val - : string option = Some "0Z23yB"
+
+req # cookie "MISSING"
+val - : string option = None}></pre>
+  </div>
+
+  <h3>post</h3>
+
+  <p>If handling a POST request, <code>req # post</code> will return the corresponding additional data. It will return <code>None</code> for non-POST requests.</p>
+
+  <p>If the POST request has a content-type of <code>application/json</code> (which can be set when performing an AJAX request), then <code>req # post</code> returns <code>Some (`JSON json)</code> where <code>json</code> of type <a href="<{url:docs/Ohm.Json.t.htm}>"><code>Ohm.Json.t</code></a> is the parsed JSON representation of the POST request content.</p>
+
+  <p>If the POST request has the more common content-types of <code>multipart/form-data</code> or <code>application/x-www-form-urlencoded</code>, then <code>req # post</code> returns <code>Some (`POST map)</code> where <code>map</code> is a <a href="http://ocaml-batteries-team.github.com/batteries-included/hdoc/BatPMap.html">polymorphic associative map</a> that represents the key-value pairs from the request.</p> 
+
+</div>
