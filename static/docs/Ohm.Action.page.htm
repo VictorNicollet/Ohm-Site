@@ -1,0 +1,35 @@
+<div class="docs">
+
+  <h2 class="-docs">val <a href="<{url:docs/index.htm}>">Ohm</a>.<a href="<{url:docs/Ohm.Action.htm}>">Action</a>.<strong>page</strong></h2>
+  
+  <p>Returns an HTML page, represented as a function which takes some JavaScript code as a parameter and returns a string containing the HTML for the entire page (including the provided JavaScript code). Typical usage and signature: </p>
+
+  <pre><{ocaml:let html js = "..." 
+let response = Action.page html response
+
+val page : (JsCode.t -> string) -> response -> response}></pre>
+
+  <p>The JS code provided to the HTML-generating function was added to the response using <a href="<{url:docs/Ohm.Action.javascript}>"><code>Action.javascript</code></a>, and it should be added right before the <code>&lt;/body&gt;</code></p>
+
+  <p>For your convenience, you should probably use <a href="<{url:docs/Ohm.Html.render_page.htm}>"><code>Html.render_page</code></a> or one of its variants to handle the generation of the HTML.</p>
+
+  <div class="example">
+    <p><b>Example</b>: idiomatic way of printing HTML.</p>
+    <pre><{ocaml:let action req res = 
+  let html = Html.str "<b>Hello, world !</b>" in
+  return (Action.page (Html.render_page ~title:"O HAI" html)) res}></pre>
+    <p>Generated output:</p>
+    <pre>&lt;!DOCTYPE html>
+&lt;html>
+&lt;head>
+  &lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  &lt;title>O HAI&lt;/title>
+&lt;/head>
+&lt;body>
+  &lt;b>Hello, world!&lt;/b>
+  &lt;script type="text/javascript">&lt;/script>
+&lt;/body>
+&lt;/html></pre>
+  </div>
+
+</div>
