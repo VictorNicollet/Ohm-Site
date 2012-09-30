@@ -1,0 +1,31 @@
+<div class="docs">
+
+  <h2 class="-docs">class type <a href="<{url:docs/index.htm}>">Ohm</a>.<a href="<{url:docs/Ohm.Action.htm}>">Action</a>.<strong>jsonp</strong></h2>
+  
+  <p>Sends some JSON back to the client using the JSONP protocol. Typical usage and signature:</p>
+
+  <pre><{ocaml:let response = Action.jsonp json response
+
+val jsonp : ?callback:string -> Json.t -> response -> response}></pre>
+
+  <p>The JSONP protocol involves generating some actual JavaScript code that is then loaded from the client as an actual script. The client provides the name of a callback function (which, by default, is assumed to be <code>"callback"</code>) that should be called with the JSON data as its argument.</p>
+
+  <div class="example">
+    <p><b>Example</b>: with the default parameters, this is the OCaml code for sending JSONP, and the generated JavaScript code. </p>
+    <pre><{ocaml:Action.jsonp (Json.to_list Json.to_int [1;2;3]) response
+
+callback([1,2,3]);}></pre>
+  </div>
+  
+  <p>Since the client usually provides the name of the callback function (for instance, <a href="http://api.jquery.com/jQuery.ajax/">jQuery.ajax</a> does), the idiomatic way of setting up a JSONP-formatted action is:</p>
+
+  <pre><{ocaml:let action req res = 
+  let callback = req # get "callback" in
+  let json = (* ... *) in
+  return (Action.jsonp ?callback json res)}></pre>
+
+  <p>Any javascript code bound to the request (by the <a href="<{url:docs/Ohm.Action.javascript}>"><code>Action.javascript</code></a> function) is appended to the generated script, so it will be executed after the callback runs.</p>
+
+  <p>You may call this function several times on the same response: instead of keeping only the last piece of JSON, it will generate one call to the callback for each provided piece of JSON.</p>
+
+</div>
