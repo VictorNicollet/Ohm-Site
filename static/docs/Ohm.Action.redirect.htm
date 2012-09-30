@@ -1,0 +1,18 @@
+<div class="docs">
+
+  <h2 class="-docs">class type <a href="<{url:docs/index.htm}>">Ohm</a>.<a href="<{url:docs/Ohm.Action.htm}>">Action</a>.<strong>redirect</strong></h2>
+  
+  <p>Creates a 303 See Other HTTP redirect to the specified <i>absolute</i> URL. Typical usage and signature:</p>
+
+  <pre><{ocaml:let response = Action.redirect url response
+
+val redirect : string -> response -> response}></pre>
+
+  <p>Any data previously bound to the response is discarded (HTML, JSON, JSONP, JS code, files...) with the exceptions of cookies, which are sent as normal.</p>
+
+  <div class="example">
+    <p><b>Example</b>: redirecting to this page. </p>
+    <pre><{ocaml:Action.redirect "http://ohm-framework.com/docs/ohm.action.redirect" response}></pre>
+  </div>
+  
+</div>
