@@ -1,0 +1,30 @@
+<div class="docs">
+
+  <h2 class="-docs">val <a href="<{url:docs/index.htm}>">Ohm</a>.<a href="<{url:docs/Ohm.Action.htm}>">Action</a>.<strong>with_cookie</strong></h2>
+  
+  <p>Adds a cookie to the response. Leaves the original response unchanged, returns the modified response. Typical usage and signature: </p>
+
+  <pre><{ocaml:let response = Action.with_cookie ~name ~value ~life response
+
+val with_cookie : name:string -> value:string -> life:int -> response -> response}></pre>
+
+  <ul>
+    <li><code>name</code> is the cookie name.</li>
+    <li><code>value</code> is the content of the cookie.</li>
+    <li><code>life</code> is how long the cookie should remain valid, starting from the time when the response is received, in seconds. A value of zero means the cookie should remain valid until the browser is closed.</li>
+  </ul>
+
+  <p>
+    You may of course call this function multiple times to set several cookies in a single response.
+  </p>
+
+  <div class="example">
+    <p><b>Example</b>: sending a session cookie.</p>
+    <pre><{ocaml:let with_session_cookie user_id res = 
+  let name  = "SESSION" in
+  let value = user_id in
+  let life  = 3600 in
+  Action.with_cookie ~name ~value ~life res)}></pre>
+  </div>
+  
+</div>
