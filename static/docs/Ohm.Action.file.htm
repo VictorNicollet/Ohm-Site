@@ -1,0 +1,30 @@
+<div class="docs">
+
+  <h2 class="-docs">val <a href="<{url:docs/index.htm}>">Ohm</a>.<a href="<{url:docs/Ohm.Action.htm}>">Action</a>.<strong>file</strong></h2>
+  
+  <p>Returns a <i>short</i>, <i>server-generated</i> downloadable file back to the client. Typical usage and signature: </p>
+
+  <pre><{ocaml:let response = Action.file ~mime ~file ~data response
+
+val file : file:string -> mime:string -> data:string -> response -> response}></pre>
+
+  <ul>
+    <li><code>file</code> is the name of the file as it will appear on the user's filesystem after the download.</li>
+    <li><code>mime</code> is the <a href="http://en.wikipedia.org/wiki/Internet_media_type">MIME type</a> of the file.</li>
+    <li><code>data</code> is a string representing the individual bytes of the file.</li>
+  </ul>
+
+  <p>Do <b>not</b> use this function to return long or heavy files: you should instead upload those files to a file server (such a cloud hosting like Amazon S3, or maybe your own server), and give the user a download link.</p>
+
+  <p>Do <b>not</b> use this function to return static files, regardless of their size: use the <a href="<{url:docs/tool.htm#publish}>"><code>ohm publish</code></a> command-line command or the <a href="<{url:docs/OhmStatic.htm}>"><code>ohmStatic</code></a> plug-in instead.</p> 
+
+  <div class="example">
+    <p><b>Example</b>: sending a hello world text file.</p>
+    <pre><{ocaml:let hello req res = 
+  let mime = "text/plain" in
+  let file = "hello.txt" in
+  let data = "Hello, world!" in
+  return (Action.file ~file ~mime ~data res)}></pre>
+  </div>
+  
+</div>
