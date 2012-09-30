@@ -1,0 +1,18 @@
+<div class="docs">
+
+  <h2 class="-docs">class type <a href="<{url:docs/index.htm}>">Ohm</a>.<a href="<{url:docs/Ohm.Action.htm}>">Action</a>.<strong>javascript</strong></h2>
+
+  <p>This function adds some JavaScript code to an HTTP response, so that it will be executed on the browser. Typical usage and signature:</p>
+  <pre><{ocaml:let response = Action.javascript javascript response
+
+val javascript : JsCode.t -> response -> response}></pre>
+
+  <p>If the HTTP response returns some HTML, the JS code will be added at the end of the body in a <code>&lt;script&gt;</code> tag.</p>
+
+  <p>If the HTTP response returns some JSONP, the JS code will be added to the JSONP response (and thus will be executed after the JSONP callback has run).</p>
+
+  <p>If the HTTP response returns some JSON, the JS code will be serialized to JSON using the format defined in <a href="<{url:docs/Ohm.JsCode.htm}>"><code>Ohm.JsCode</code><a> and placed in the property <code>code</code> of the returned JSON. <b>It&nbsp;is the responsibility of the client-side code performing the AJAX request to execute the returned code !</b></p>
+
+  <p>Any other type of HTTP response (such as redirections or file downloads) is silently turned into an empty JSON response when this function is called.</p>
+
+</div>
