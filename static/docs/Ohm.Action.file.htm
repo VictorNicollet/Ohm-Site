@@ -2,7 +2,7 @@
 
   <h2 class="-docs">val <a href="<{url:docs/index.htm}>">Ohm</a>.<a href="<{url:docs/Ohm.Action.htm}>">Action</a>.<strong>file</strong></h2>
   
-  <p>Returns a <i>short</i>, <i>server-generated</i> downloadable file back to the client. Typical usage and signature: </p>
+  <p>Returns a short, server-generated downloadable file back to the client.  Leaves the original response unchanged, returns the modified response. Typical usage and signature: </p>
 
   <pre><{ocaml:let response = Action.file ~mime ~file ~data response
 

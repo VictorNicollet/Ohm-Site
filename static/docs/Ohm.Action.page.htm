@@ -2,7 +2,7 @@
 
   <h2 class="-docs">val <a href="<{url:docs/index.htm}>">Ohm</a>.<a href="<{url:docs/Ohm.Action.htm}>">Action</a>.<strong>page</strong></h2>
   
-  <p>Returns an HTML page, represented as a function which takes some JavaScript code as a parameter and returns a string containing the HTML for the entire page (including the provided JavaScript code). Typical usage and signature: </p>
+  <p>Returns an HTML page, represented as a function which takes some JavaScript code as a parameter and returns a string containing the HTML for the entire page (including the provided JavaScript code).  Leaves the original response unchanged, returns the modified response. Typical usage and signature: </p>
 
   <pre><{ocaml:let html js = "..." 
 let response = Action.page html response

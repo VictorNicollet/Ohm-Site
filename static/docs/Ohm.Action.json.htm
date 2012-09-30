@@ -2,7 +2,7 @@
 
   <h2 class="-docs">val <a href="<{url:docs/index.htm}>">Ohm</a>.<a href="<{url:docs/Ohm.Action.htm}>">Action</a>.<strong>json</strong></h2>
   
-  <p>Sends some JSON back to the client, by adding some JSON content to one or more JSON channels being returned by the HTTP request. Typical usage and signature:</p>
+  <p>Sends some JSON back to the client, by adding some JSON content to one or more JSON channels being returned by the HTTP request.  Leaves the original response unchanged, returns the modified response. Typical usage and signature:</p>
 
   <pre><{ocaml:let response = Action.json [channel, json] response
 

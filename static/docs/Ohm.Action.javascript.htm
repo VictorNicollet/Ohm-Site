@@ -2,7 +2,7 @@
 
   <h2 class="-docs">val <a href="<{url:docs/index.htm}>">Ohm</a>.<a href="<{url:docs/Ohm.Action.htm}>">Action</a>.<strong>javascript</strong></h2>
 
-  <p>This function adds some JavaScript code to an HTTP response, so that it will be executed on the browser. Typical usage and signature:</p>
+  <p>This function adds some JavaScript code to an HTTP response, so that it will be executed on the browser.  Leaves the original response unchanged, returns the modified response. Typical usage and signature:</p>
   <pre><{ocaml:let response = Action.javascript javascript response
 
 val javascript : JsCode.t -> response -> response}></pre>
