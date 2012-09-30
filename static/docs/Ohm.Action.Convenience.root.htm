@@ -1,0 +1,17 @@
+<div class="docs">
+
+  <h2 class="-docs">val&nbsp;<a href="<{url:docs/index.htm}>">Ohm</a>.<a href="<{url:docs/Ohm.Action.htm}>">Action</a>.<a href="<{url:docs/Ohm.Action.htm}>#convenience">Convenience</a>.<strong>root</strong></h2>
+
+  <p>
+    This function returns the root URL of a server instance. Typical usage and signature: 
+  </p>
+
+  <pre><{ocaml:let url = Action.Convenience.root server instance
+
+val root : 'i server -> 'i -> string}></pre>
+
+  <p>
+    The generated URLs are of the form <code>https://example.com:42</code> with no trailing slash &mdash; the port number is omitted if it is 443 for HTTPS or 80 for HTTP. 
+  </p>
+
+</div>
