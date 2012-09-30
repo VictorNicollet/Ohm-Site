@@ -1,0 +1,85 @@
+<div class="docs">
+  <h2 class="-docs">module <a href="<{url:docs/index.htm}>">Ohm</a>.<a href="<{url:docs/Ohm.Action.htm}>">Action</a>.<strong>Args</strong></h2>
+
+  <p>Every action can receive arguments as part of the HTTP request. These arguments are part of the URL, and so must be parsed before they can be used. This module provides the necessary parsers.</p>
+
+  <p>A fundamental concept in argument parsing is the <b>cell</b>, the source of a single argument. The cells are those parts of the URL that are not matched by the action's path, separated by slashes. </p>
+
+  <div class="example">
+    <p><b>Example</b>: if the action's path is <code>user/edit</code>, and the URL of the incoming HTTP request is <code>http://example.com/user/edit/15/pic</code>, then the two cells will be <code>"15"</code> and <code>"pic"</code>.</p>
+  </div>
+
+  <p>A <b>cell parser</b> will explain how an individual cell is parsed.</p>
+
+  <p>A <b>global parser</b> will explain how many cells are expected, and how they are parsed.</p>
+
+  <h3>Cell parsers</h3>
+
+  <p>The three fundamental cell parsers are <code>string</code>, <code>int</code> and <code>float</code>. All three are defined in this module.</p>
+
+  <p>Other modules and plugins may define other cell parsers. For instance, the identifier module defines cell parsers for identifiers as <a href="<{url:docs/Ohm.Id.arg.htm}>"><code>Id.arg</code></a>.</p>
+
+  <p>You may choose to define your own cell parsers by implementing the type below&nbsp;:</p>
+
+  <pre><{ocaml:type 'a cell = ('a -> string) * (string -> 'a option)}></pre>
+
+  <p>The second half of the tuple explains how the cell should be parsed (the parser function returns <code>None</code> when a parse error occurs), while the first half explains how the parsed value should be turned back into a cell. It is highly recommended that for any parser <code>p</code>: </p>
+
+  <pre><{ocaml:snd p (fst p x) = x (* for any x *)}></pre>
+
+  <div class="example">
+    <p><b>Example</b>: this is how the <code>int</code> cell parser is implemented. </p>
+    <pre><{ocaml:let int = 
+  string_of_int, 
+  (fun s -> try Some (int_of_string s) with _ -> None)}></pre>
+  </div>
+
+  <h3>Global parsers</h3>
+
+  <p>Global parser <code>none</code> means there should be no cells. This means that if there are any cells, the parser will fail.</p>
+
+  <p>Other global parsers follow the naming convention <code>r*o*[in]?</code>:</p>
+  <ul>
+    <li>Every <code>r</code> denotes a required argument. A cell parser should be provided.</li>
+    <li>Every <code>o</code> denotes an optional argument. A cell parser should be provided.</li>
+    <li>A final <code>n</code> denotes that the remaining arguments should be provided as a list. A cell parser should be provided to handle that list.</li>
+    <li>A final <code>i</code> denotes that additional arguments are allowed, but will be ignored.</li>
+    <li>Having no final <code>n</code> or <code>i</code> means no additional arguments are allowed, and the parser will fail if any are present.</li>
+  </ul>
+
+  <p>The global parser will return a tuple containing a value for every required argument, an option for every optional argument, and possibly a list representing the remaining arguments. Up to four required and/or optional arguments are supported.</p>
+
+  <div class="example">
+    <p><b>Example</b>: function <code>parse</code> returns the result of the global parser, or <code>None</code> if it failed.</p>
+
+    <pre><{ocaml:open Ohm
+open Action.Args
+
+(* The cells for URL /a/12/b *)
+let cells = ["a";"12";"b"]
+
+parse (rroo string int string string) cells
+(* ==> Some ("a", 12, Some "b", None) *)
+
+parse (rr string int) cells
+(* ==> None *)
+
+parse (on string string) cells
+(* ==> Some (Some "a", ["12", "b"]) *)
+
+parse (rrrr string int string string) cells
+(* ==> None *)
+
+parse (ri string) cells
+(* ==> Some "a" *)}></pre>
+  </div>
+
+  <p>You may choose to define your own global parsers by implementing the type below:</p>
+  
+  <pre><{ocaml:type 'a t = ('a -> string list) * (string list -> 'a option)}></pre>
+
+  <p>The second half of the pair parses the raw cells, returning <code>None</code> if it fails. The first half of the pair turns the parsed value back into raw cells. It is highly recommended that for every parser <code>p</code>:</p>
+  
+  <pre><{ocaml:snd p (fst p x) = x (* for any x *)}></pre>
+
+</div> 
