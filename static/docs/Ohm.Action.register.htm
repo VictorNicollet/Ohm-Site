@@ -1,0 +1,36 @@
+<div class="docs">
+  <h2 class="-docs">val <a href="<{url:docs/index.htm}>">Ohm</a>.<a href="<{url:docs/Ohm.Action.htm}>">Action</a>.<strong>register</strong></h2>
+
+  <p>This function registers an action with the dispatcher, meaning that it will be used to handle HTTP requests that match its server, path and expected arguments. Typical usage and function signature: </p>
+
+  <pre><{ocaml:let endpoint = Action.register server path args action
+
+val register : 
+     'server server
+  -> string
+  -> 'args Args.t
+  -> ('server,'args) t
+  -> ('server,'args) endpoint
+}></pre>
+
+  <ul>
+    <li><p><code>server</code> (of type <a href="<{url:docs/Ohm.Action.server.htm}>"><code>Action.server</code></a>) determines which domains, protocols and ports are handled by the registered action.</p></li>
+    <li><p><code>path</code> is a string representing the URL prefix that is handled by the registered action.</p></li>
+    <li><p><code>args</code> is a <a href="<{url:docs/Ohm.Action.Args.htm}>">parser</a> that handles the parts of the URL after the <code>path</code>.</p></li>
+    <li><p><code>action</code> (of type <a href="<{url:docs/Ohm.Action.t.htm}>"><code>Action.t</code></a>) is the function you wish to register</p></li>
+    <li><p>The return value <code>endpoint</code> is an <a href="<{url:docs/Ohm.Action.htm}>#endpoint">endpoint</a> that can be used to create an URL referencing the registered action.</p></li>
+  </ul>
+
+  <p>
+    The server instance, and the result of the argument parsing, are provided to the action as part of its <a href="<{url:docs/Ohm.Action.request.htm}>"><code>Action.request</code></a> parameter.
+  </p>
+
+  <p>
+    For your convenience, consider using <a href="<{url:docs/O.register.htm}>"><code>O.register</code></a> instead of this function. 
+  </p>
+
+  <p>
+    The action's endpoint is available to the action itself as member <code>self</code> of the request parameter. If you need to have access to the endpoint before registering the action, such as when two actions need to reference each other in this way, use <a href="<{url:docs/Ohm.Action.declare.htm}>"><code>Action.declare</code></a> instead.
+  </p>
+
+</div>
