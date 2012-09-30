@@ -19,7 +19,7 @@
 <a name="action"></a><h3>Actions</h3>
 
 <p>
-  An action is a function that describes how to handle an incoming HTTP request. Actions implement type <a href="<{url:Ohm.Action.t.htm}>"><code>Action.t</code></a> : they receive a <a href="#request">request</a> object and a default <a href="#response">response</a> as a parameter, and they return an <a href="<{url:docs/index.htm}>">run-box</a> that evaluates to a response. 
+  An action is a function that describes how to handle an incoming HTTP request. Actions implement type <a href="<{url:docs/Ohm.Action.t.htm}>"><code>Action.t</code></a> : they receive a <a href="#request">request</a> object and a default <a href="#response">response</a> as a parameter, and they return an <a href="<{url:docs/index.htm}>">run-box</a> that evaluates to a response. 
 </p>
 
 <div class="example">
@@ -33,7 +33,7 @@ fun request response ->
 </div>
 
 <p>
-  When the application runs in web server mode, it must decide what action should handle each HTTP request, and it does so by using the dispatcher built into the Ohm framework. Actions are added to the dispatcher using the <a href="<{url:Ohm.Action.register.htm}>"><code>register</code></a> or <a href="<{url:Ohm.Action.declare.htm}>"><code>declare</code></a> functions. 
+  When the application runs in web server mode, it must decide what action should handle each HTTP request, and it does so by using the dispatcher built into the Ohm framework. Actions are added to the dispatcher using the <a href="<{url:docs/Ohm.Action.register.htm}>"><code>register</code></a> or <a href="<{url:docs/Ohm.Action.declare.htm}>"><code>declare</code></a> functions. 
 </p>
 
 <div class="example">
@@ -74,7 +74,7 @@ http://example.com/test/1.5 <span class="comment">==&gt; {value:1.5,code:[]}</sp
 <ol>
   <li><p>Eliminate all actions where the server does not match the domain and protocol of the incoming HTTP request.</p></li>
   <li><p>Eliminate all actions where the (path + args) does not match the entire URL of the HTTP request.</p></li>
-  <li><p>If there are no actions left, use the action registered with <a href="<{url:docs/Ohm.Action.register_404.htm}>"><code>register_404</code></a> or raise <a href="<{url:Ohm.Action.Action_not_found.htm}>"><code>Action_not_found</code></a></p></li>
+  <li><p>If there are no actions left, use the action registered with <a href="<{url:docs/Ohm.Action.register_404.htm}>"><code>register_404</code></a> or raise <a href="<{url:docs/Ohm.Action.Action_not_found.htm}>"><code>Action_not_found</code></a></p></li>
   <li><p>Return the action with the longest path.</p></li>
 </ol>
 
