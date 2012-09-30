@@ -1,0 +1,29 @@
+<div class="docs">
+
+  <h2 class="-docs">val&nbsp;<a href="<{url:docs/index.htm}>">Ohm</a>.<a href="<{url:docs/Ohm.Action.htm}>">Action</a>.<a href="<{url:docs/Ohm.Action.htm}>#convenience">Convenience</a>.<strong>sub_domain_server</strong></h2>
+
+  <p>
+    This function creates a <a href="<{url:docs/Ohm.Action.htm}>#server">server</a> that corresponds to all sub-domains of a single domain. Typical use and signature: 
+  </p>
+
+  <pre><{ocaml:let server = Action.Convenience.sub_domain_server suffix
+
+val sub_domain_server : 
+     ?secure:bool
+  -> ?port:int
+  -> ?cookies:string
+  -> string
+  -> string server}></pre>
+
+  <ul>
+    <li><code>secure</code> determines whether the server should accept only HTTPS requests. If unspecified, the server accepts only HTTP requests.</li>
+    <li><code>port</code> determines on what port the server should expect requests. If unspecified, uses the default port 80 for HTTP and 443 for HTTPS.</li>
+    <li><code>cookies</code> determines what the cookie restriction domain should be (this effectively sets the value of method <code>cookie_domain</code> in <a href="<{url:docs/Ohm.Action.server.htm}>"><code>Action.server</code></a>, the default being the suffix.</li>
+    <li><code>suffix</code> is the suffix domain for which the requests should be accepted, such as <code>.example.com</code>. Note that the domain <code>example.com</code> would not be handled, but domains such as <code>www.example.com</code> would be.</li>
+  </ul>
+
+  <p>
+    The instance is a string representing the sub-domain prefix. For example, if the domain suffix is <code>.example.com</code> and a request comes in for <code>foo.example.com</code>, then the server instance would be <code>"foo"</code>.
+  </p>
+
+</div>
