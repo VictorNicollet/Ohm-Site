@@ -1,0 +1,67 @@
+<div class="docs">
+  
+  <h2 class="-docs">module <a href="<{url:docs/index.htm}>">Ohm</a>.<strong>Run</strong></h2>
+
+  <p>
+    A <b>run-box</b> of type <a href="<{url:docs/Ohm.Run.t.htm}>"><code>('ctx,'t) Ohm.Run.t</code></a> is a black box that can evaluate a value of type <code>'t</code> when provided with a context of type <code>'ctx</code>.</p>
+
+  <p>
+    Using this abstraction for most computations lets the Ohm framework perform complex run-time optimizations and eliminates most code related to passing pervasive concepts (database connections, internationalization dictionaries...) as arguments. The rationale and basic principles are futher described in <a href="<{url:tutorials/ohm.run.htm}>">this tutorial</a>. 
+  </p>
+
+  <h3>Evaluating a run-box</h3>
+
+  <p>
+    This section is provided for informative purposes only, as in practice you will never have to evaluate run-boxes yourself. Instead, you should build a run-box that represents whatever you wish to perform, and let the Ohm framework evaluate that run-box for you.
+  </p>
+
+  <p>Function <a href="<{url:docs/Ohm.Run.eval.htm}>"><code>eval</code></a> is used to evaluate run-boxes.</p>
+
+  <h3>The run-box monadic style</h3>
+
+  <p>
+    In order to create a run-box that does whatever complex operations you need to perform, you should use combinators that let you build complex run-boxes from simpler run-boxes.
+  </p>
+
+  <ul>
+    <li><a href="<{url:docs/Ohm.Run.return.htm}>"><code>return</code></a> creates a run-box that returns a value witht evaluating anything.</li>
+    <li><a href="<{url:docs/Ohm.Run.map.htm}>"><code>map</code></a> creates a run-box that applies a function to the result of another run-box.</li>
+    <li><a href="<{url:docs/Ohm.Run.bind.htm}>"><code>bind</code></a> creates a run-box that applies a function to the result of another run-box, where said function returns a run-box itself.</li>
+    <li><code>unwrap</code> is an alias for <code>bind identity</code></li>
+  </ul>
+
+  <h3>Handling the context</h3>
+
+  <ul>
+    <li><a href="<{url:docs/Ohm.Run.context.htm}>"><code>context</code></a> is a run-box that returns the context it is evaluated in.</li>
+    <li><a href="<{url:docs/Ohm.Run.with_context.htm}>"><code>with_context</code></a> creates a run-box that evaluates another run-box in another context.</li>
+  </ul>
+ 
+  <h3>Utility functions</h3>
+
+  <p><b>Memoization</b>: storing results of computations to save time.</p>
+  
+  <ul>
+    <li><a href="<{url:docs/Ohm.Run.memo.htm}>"><code>memo</code></a> saves time by never evaluating a run-box twice in a row with the same context.</li>
+  </ul>
+
+  <p><b>Lists</b>: typical list functions implemented to accept run-boxes.</p>
+  <ul>
+    <li><a href="<{url:docs/Ohm.Run.list_map.htm}>"><code>list_map</code></a> &middot; <code>List.map</code></li>
+    <li><a href="<{url:docs/Ohm.Run.list_filter.htm}>"><code>list_filter</code></a> &middot; <code>BatList.filter_map</code></li>
+    <li><a href="<{url:docs/Ohm.Run.list_collect.htm}>"><code>list_collect</code></a> &middot; <code>List.map |- List.concat</code></li>
+    <li><a href="<{url:docs/Ohm.Run.list_find.htm}>"><code>list_find</code></a> &middot; <code>BatList.find_map</code></li>
+    <li><a href="<{url:docs/Ohm.Run.list_fold.htm}>"><code>list_fold</code></a> &middot; <code>List.fold_left</code></li>
+    <li><a href="<{url:docs/Ohm.Run.list_iter.htm}>"><code>list_iter</code></a> &middot; <code>List.iter</code></li>
+    <li><a href="<{url:docs/Ohm.Run.list_exists.htm}>"><code>list_exists</code></a> &middot; <code>List.exists</code></li>
+  </ul>
+  
+  <p><b>Options</b>: extending monadic style to run-boxes that return optional values.</p>
+
+  <ul>
+    <li><a href="<{url:docs/Ohm.Run.opt_map.htm}>"><code>opt_map</code></a> extends <code>map</code></li>
+    <li><a href="<{url:docs/Ohm.Run.opt_bind.htm}>"><code>opt_bind</code></a> extends <code>bind</code></li>
+  </ul>
+  
+</div>
+  
