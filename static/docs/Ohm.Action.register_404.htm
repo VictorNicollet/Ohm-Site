@@ -1,0 +1,34 @@
+<div class="docs">
+  <h2 class="-docs">val <a href="<{url:docs/index.htm}>">Ohm</a>.<a href="<{url:docs/Ohm.Action.htm}>">Action</a>.<strong>register_404</strong></h2>
+
+  <p>This function lets you register a function that handles HTTP requests that do not match any registered action. If no such function is defined, bad things will happen. Typical usage and signature:</p>
+
+  <pre><{ocaml:let handler domain path res = (* ... *)
+let () = Action.register_404 handler
+
+val register_404 : 
+  (string -> string -> response -> (unit,response) Run.t) -> unit}></pre>
+
+  <p>The handler function receives three arguments:</p>
+  <ul>
+    <li><p><code>domain</code> is the domain name of the incoming request.</p></li>
+    <li><p><code>path</code> is the path segment of the incoming URL.</p></li>
+    <li><p><code>res</code> is a default response, which must be <a href="<{url:docs/Ohm.Action.htm}>#response">transformed</a> into the final response.</li>
+  </ul>
+
+  <p>The return value of the handler is a <a href="<{url:docs/Ohm.Run.htm}>">run-box</a> that evaluates to the final HTTP response.</p>
+
+  <p>For your convenience, creating a new Ohm project will automatically set up a 404 handler for you in module <code>CErrorPage</code>:</p>
+
+  <pre><{ocaml:open Ohm
+open Ohm.Universal
+
+let () = O.register_404 begin fun server path res ->
+  let! title = ohm $ AdLib.get `ErrorPage_Error404_Title in 
+  let! html  = ohm $ Asset_ErrorPage_Error404.render () in
+  let  page  = Html.print_page 
+    ~css:[Asset.css] ~body_classes:["error-page"] ~title html in
+  return $ Action.page page res
+end}></pre>
+
+</div>
