@@ -1,0 +1,25 @@
+<div class="docs">
+
+  <h2 class="-docs">val&nbsp;<a href="<{url:docs/index.htm}>">Ohm</a>.<a href="<{url:docs/Ohm.Action.htm}>">Action</a>.<a href="<{url:docs/Ohm.Action.htm}>#convenience">Convenience</a>.<strong>single_domain_server</strong></h2>
+
+  <p>
+    This function creates a <a href="<{url:docs/Ohm.Action.htm}>#server">server</a> that corresponds to a single domain. This is the case for default server <code>O.server</code> created for you when you start a new Ohm project. Typical use and signature: 
+  </p>
+
+  <pre><{ocaml:let server = Action.Convenience.single_domain_server domain
+
+val single_domain_server : 
+     ?secure:bool
+  -> ?port:int
+  -> ?cookies:string
+  -> string
+  -> unit server}></pre>
+
+  <ul>
+    <li><code>secure</code> determines whether the server should accept only HTTPS requests. If unspecified, the server accepts only HTTP requests.</li>
+    <li><code>port</code> determines on what port the server should expect requests. If unspecified, uses the default port 80 for HTTP and 443 for HTTPS.</li>
+    <li><code>cookies</code> determines what the cookie restriction domain should be (this effectively sets the value of method <code>cookie_domain</code> in <a href="<{url:docs/Ohm.Action.server.htm}>"><code>Action.server</code></a>, the default being the domain name.</li>
+    <li><code>domain</code> is the domain for which the requests should be accepted. Keep in mind that sub-domains are <b>not</b> handled by this server.</li>
+  </ul>
+
+</div>

@@ -1,0 +1,17 @@
+<div class="docs">
+
+  <h2 class="-docs">val <a href="<{url:docs/index.htm}>">Ohm</a>.<a href="<{url:docs/Ohm.Action.htm}>">Action</a>.<a href="<{url:docs/Ohm.Action.htm}>#convenience">Convenience</a>.<strong>get_json</strong></h2>
+
+  <p>
+    This function helps extract the JSON payload of a request. 
+  </p>
+
+  <pre><{ocaml:let json = Action.Convenience.get_json req 
+    
+(* Equivalent to: *)
+
+let json = match req # post with 
+  | Some (`JSON json) -> Some json 
+  | _ -> None}></pre>
+
+</div>
