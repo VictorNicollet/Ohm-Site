@@ -1,0 +1,23 @@
+<div class="docs">
+  
+  <h2 class="-docs">val <a href="<{url:docs/index.htm}>">Ohm</a>.<a href="<{url:docs/Ohm.Run.htm}>">Run</a>.<strong>return</strong></h2>
+
+  <p>
+    This function creates a run-box that always evaluates to the same value regardless of context. Typical use and signature: 
+  </p>
+
+  <pre><{ocaml:let runbox = Run.return value 
+
+val return : 't -> ('ctx,'t) t}></pre>
+
+  <p>
+    This function is designed so that for any values <code>ctx</code> and <code>x</code>: 
+  </p>
+
+  <pre><{ocaml:Run.eval ctx (Run.return x) == x}></pre>
+
+  <p>
+    <a href="<{url:docs/Ohm.Universal.htm}>#return"><code>Ohm.Universal.return</code></a> is an alias for this function.
+  </p>
+
+</div>
