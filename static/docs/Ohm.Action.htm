@@ -19,7 +19,7 @@
 <h3><a name="action"></a>Actions</h3>
 
 <p>
-  An action is a function that describes how to handle an incoming HTTP request. Actions implement type <a href="<{url:docs/Ohm.Action.t.htm}>"><code>Action.t</code></a> : they receive a <a href="#request">request</a> object and a default <a href="#response">response</a> as a parameter, and they return an <a href="<{url:docs/index.htm}>">run-box</a> that evaluates to a response. 
+  An action is a function that describes how to handle an incoming HTTP request. Actions implement type <a href="<{url:docs/Ohm.Action.t.htm}>"><code>Action.t</code></a> : they receive a <a href="#request">request</a> object and a default <a href="#response">response</a> as a parameter, and they return an <a href="<{url:docs/Ohm.Run.htm}>">run-box</a> that evaluates to a response. 
 </p>
 
 <div class="example">
@@ -74,7 +74,7 @@ http://example.com/test/1.5 <span class="comment">==&gt; {value:1.5,code:[]}</sp
 <ol>
   <li><p>Eliminate all actions where the server does not match the domain and protocol of the incoming HTTP request.</p></li>
   <li><p>Eliminate all actions where the (path + args) does not match the entire URL of the HTTP request.</p></li>
-  <li><p>If there are no actions left, use the action registered with <a href="<{url:docs/Ohm.Action.register_404.htm}>"><code>register_404</code></a> or raise <a href="<{url:docs/Ohm.Action.Action_not_found.htm}>"><code>Action_not_found</code></a></p></li>
+  <li><p>If there are no actions left, use the action registered with <a href="<{url:docs/Ohm.Action.register_404.htm}>"><code>register_404</code></a></p></li>
   <li><p>Return the action with the longest path.</p></li>
 </ol>
 
