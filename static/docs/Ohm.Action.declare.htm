@@ -1,0 +1,24 @@
+<div class="docs">
+  <h2 class="-docs">val <a href="<{url:docs/index.htm}>">Ohm</a>.<a href="<{url:docs/Ohm.Action.htm}>">Action</a>.<strong>declare</strong></h2>
+
+  <p>This function registers an action with the dispatcher, meaning that it will be used to handle HTTP requests that match its server, path and expected arguments. This is done in a two-step process: first, the action is <b>declared</b> (which creates an endpoint that can be used to reference it), and then it is <b>defined</b> (by providing its implementation). Typical usage and function signature: </p>
+
+  <pre><{ocaml:let endpoint, define = Action.declare server path args
+let () = define action 
+
+val declare : 
+     'server server
+  -> string
+  -> 'args Args.t
+  -> ('server,'args) endpoint * (('server,'args) t -> unit) 
+}></pre>
+
+  <p>
+    Outside of allowing a two-step registration, and thus providing support for mutually recursive actions, this function behaves exactly like <a href="<{url:docs/Ohm.Action.register.htm}>"><code>Action.register</code></a>.
+  </p>
+
+  <p>
+    For your convenience, consider using <a href="<{url:docs/O.declare.htm}>"><code>O.declare</code></a> instead of this function. 
+  </p>
+
+</div>
