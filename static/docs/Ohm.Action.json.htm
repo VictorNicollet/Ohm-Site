@@ -1,0 +1,28 @@
+<div class="docs">
+
+  <h2 class="-docs">class type <a href="<{url:docs/index.htm}>">Ohm</a>.<a href="<{url:docs/Ohm.Action.htm}>">Action</a>.<strong>json</strong></h2>
+  
+  <p>Sends some JSON back to the client, by adding some JSON content to one or more JSON channels being returned by the HTTP request. Typical usage and signature:</p>
+
+  <pre><{ocaml:let response = Action.json [channel, json] response
+
+val json : (string * Json.t) list -> response -> response}></pre>
+
+  <p>The actual JSON sent to the client is an object where every channel is a property. Applying this function several times will add more channels to the response (and overwrite existing channels).</p>
+
+  <p>The <code>code</code> channel is always sent, as it contains all the Javascript code bound to the request, and it cannot be overwritten. <b>It is the responsibility of the client-side code performing the AJAX request to execute any code found there. See <a href="<{url:docs/Ohm.Action.javascript}>"><code>Action.javascript</code></a> for more information.</b></p>
+
+  <p>The default response is an empty JSON response.</p>
+
+  <div class="example">
+    <p><b>Example</b>: consider the following OCaml code and the corresponding JSON received by the client.
+<pre><{ocaml:Action.json ["a", Json.String "b" ; "c", Json.Int 42] response
+
+==> {"a":"b","c":42}}></pre> 
+  </div>
+
+  <p>
+    If you need to perform cross-domain AJAX requests, you might want to use <a href="<{url:docs/Ohm.Action.jsonp.htm}>"><code>Action.jsonp</code></a> instead.
+  </p>
+
+</div>
