@@ -1,3 +1,157 @@
 <p class="abstract">
   This teaches you how to define new URLs on your application, and respond to requests on those URLs.
 </p>
+
+<h3>Actions, Servers and URLs</h3>
+
+<p>
+  The user's browser fetches web pages by making HTTP requests. An HTTP request might look like this:
+</p>
+
+<pre>GET <span class=string>http</span>://<span class=atom>example.com</span>:<span class=key2>8080</span>/<span class=name>feed</span><span class=keyword>?format=RSS</span>
+
+  GET         <span class=comment>is the request method</span>
+  <span class=string>http</span>        <span class=comment>is the protocol</span>
+  <span class=atom>example.com</span> <span class=comment>is the domain</span>
+  <span class=key2>8080</span>        <span class=comment>is the port</span>
+  <span class=name>feed</span>        <span class=comment>is the path</span>
+  <span class=keyword>?format=RSS</span> <span class=comment>are the GET parameters</span>
+</pre>
+
+<p>
+  Depending on these different factors, the web application needs to perform different things. Ohm lets you bind functions to specific combinations of protocol, domain, port and path: these functions are called <b>actions</b> and are responsible for build a response that is sent to the user's browser. Actions also have access to the request method, the GET parameters, and some other data as well.  
+</p>
+
+<p>
+  In the Ohm vocabulary, a <b>server</b> is a group of acceptable (protocol, domain, port) combinations. Some servers only accept a single combination, such as <code>http://example.com</code> (on the default port 80), while others might accept all sub-domains of a given domain, such as <code>http://*.example.com</code> 
+</p>
+
+<p>
+  Ohm defines a server for you. Its name is <code>O.server</code> and it is defined in file <code>o.ml</code>, which contains default values you can edit to your heart's content.
+</p> 
+
+<h3>Registering an action</h3>
+
+<p>
+  The code below <b>registers</b> an action on path <code>hello</code> on the default server &mdash; registered actions are used to respond to incoming request that match their server and path. 
+</p>
+
+<pre><div class="src">/ocaml/cHello.ml</div><{ocaml:open Ohm
+open Ohm.Universal
+
+let hello = O.register "hello" Action.Args.none 
+  (fun req res -> return $ Action.page ignore res)}></pre>
+
+<pre><div class="src">/ocaml/cHello.mli</div><{ocaml:(* This file intentionally left blank *)}></pre>
+
+<pre><div class="src">/ocaml/main.ml</div>module Controllers = struct
+  open CErrorPage
+  <{ocaml:open CHello (* <== Add this line *)}>
+end</pre> 
+
+<p>
+  If you <code>make</code> the application and visit <code>http://ice-cream.local/hello</code>, you should see an empty white page instead of the standard "Page Not Found" error message. 
+</p>
+
+<p><b>Step-by-step</b> of the above code:</p>
+<pre><{ocaml:open Ohm
+open Ohm.Universal}></pre>
+<p>These are opened so that commonly used bindings, such as <code>Action</code> or <code>$</code>, can be used without prefixing.</p>
+<pre><{ocaml:let hello = O.register "hello" Action.Args.none}></pre>
+<p>The function <code>O.register</code> is defined for your convenience as being more or less equivalent to <code>Action.register O.server</code> which means that it automatically registers actions on the default server. The string <code>"hello"</code> specifies the path, and <code>Action.Args.none</code> says that no additional arguments are expected as part of the path (more on this later). </p>
+<pre><{ocaml:  (fun req res -> return $ Action.page ignore res)}></pre>
+<p>Here, we implement the action: a function which takes a request and a default response as parameters, and transforms the response into the final response by using <code>Action.page</code> which adds an HTML page to the response &mdash; we'll learn later how to generate HTML pages in Ohm.</p>
+<p>The value returned by the action should be a run-box, so we use <code>return</code> to turn our result into one.</p>
+<pre><{ocaml:open CHello}></pre>
+<p>This references the newly created file <code>cHello.ml</code> from the main file of the project, causing it to be compiled and included in the final application.</p>
+
+<h3>Arguments</h3>
+
+<p>Let us now change the definition of the previous action: it should now accept a string argument (the name of the person to be greeted), and return the content as JSON (to illustrate how to do this) instead of HTML. Don't worry, the next tutorial chapter deals with generating HTML!</p>
+
+<pre><div class="src">/ocaml/cHello.ml</div><{ocaml:open Ohm
+open Ohm.Universal
+
+let hello = O.register "hello" Action.Args.(r string) 
+  (fun req res -> 
+    let greeting = "Hello, " ^ request # args ^ "!" in 
+    return $ Action.json [ "greeting", Json.String greeting ] res)}></pre>
+
+<p>Here, <code>Action.Args.(r string)</code> tells Ohm that the action expects one required argument (the <code>r</code>) that happens to be a string (the <code>string</code>). Read more about this in the documentation for module <a href="<{url:docs/Ohm.Action.Args.htm}>"><code>Ohm.Action.Args</code></a></p>
+
+<p>That argument is available to the action as <code>req # args</code> which (since we expect a single string argument) is of type <code>string</code>.</p>
+
+<p>The <code>Action.json</code> adds one or more key-value pairs to the JSON object returned by the action. So, if you were to visit <code>http://ice-cream.local/hello/World</code>, you would view a JSON file containing the following:</p>
+
+<pre>{"greeting":"Hello, world!","code":[]}</pre>
+
+<p>The <code>code</code> key is added automatically. We'll learn about this a little bit later, when dealing with client-side JavaScript.</p>
+
+<h3>Creating URLs</h3>
+
+<p>The URL for the action we defined is of the form <code>http://ice-cream.local/hello/*</code> which is a bit clunky to manipulate, especially since you might want to use a different domain when on your production server. Besides, you might want to check that the arguments you provide are of the correct type, and automatically detect if you're using an URL which is undefined.</p>
+
+<p>The Ohm solution to this is <b>endpoints</b> : values which are generated when you register an action, and which let you build the URL for that action by providing the required arguments.</p>
+
+<p>In the code above, we have created an endpoint named <code>hello</code>. The type of that endpoint is <code>(unit,string) Action.endpoint</code> :</p>
+<ul>
+  <li><code>unit</code> means that you do not need to provide information about the server part (if you were in a multi-domain setup like <code>*.example.com</code> this would probably be a <code>string</code> to represent the current subdomain).</li>
+  <li><code>string</code> means the action expects a single argument of that type.</li>
+</ul>
+
+<p>Generating an URL is simple:</p>
+
+<pre><{ocaml:let url = Action.url hello () "World"
+
+(* Result: *)
+val url : string = "http://ice-cream.local/hello/World"}></pre>
+
+<h3>Redirections</h3>
+
+<p>The last reasonably frequent operation performed by actions is to redirect to another action. This is especially common when using non-AJAX forms: the form posts the data to URL A, which performs some computations and redirects to URL B which shows the result of those computations. If you were to display the result of the computations from URL A itself, the user would not be able to refresh that page without re-sending the form.</p>
+
+<p>Another reason for redirections is to provide an explicit default values for missing parameters. For example, instead of <code>/hello</code> assuming that the it should greet <code>"World"</code>, it should redirect to <code>/hello/World</code> instead in order to avoid two pages with different URLs being identical &mdash; Google does not like that.</p>
+
+<pre><div class="src">/ocaml/cHello.ml</div><span class=light>open Ohm
+open Ohm.Universal
+
+let hello = O.register "hello" Action.Args.(r string) 
+  (fun req res -> 
+    let greeting = "Hello, " ^ request # args ^ "!" in 
+    return $ Action.json [ "greeting", Json.String greeting ] res)</span>
+
+<{ocaml:let _ = O.register "hello" Action.Args.none
+  (fun req res -> 
+    let url = Action.url hello () "World" in
+    return $ Action.redirect url res)}></pre>
+
+<p>This might seem incorrect: why are we defining two actions for the same path? It's because the required string argument for the first action is actually part of the path, meaning that <code>/hello</code> will never trigger the first action &mdash; the argument is missing. </p>
+
+<p>Remember that redirections require a full URL. <code>/hello/World</code> is not enough, you need the full <code>http://ice-cream.com/hello/World</code>. This is why we're using <code>Action.url</code> instead of hard-coding <code>"/hello/World"</code> here.</p>
+
+<h3>The URL modules and two-step registration</h3>
+
+<p>With the action registration syntax we have used so far, it is impossible to generate the URL of an action before that action is registered &mdash; because the endpoint is returned by the registration function. This does not scale well on large projects where most actions reference each other.</p>
+
+<p>The solution is to split the registration process into a <b>declaration</b> step where the endpoint is generated, and a <b>definition</b> step where the corresponding action is registered. By convention, the declaration happens in URL modules instead of controller modules (think <code>UrlHello</code> instead of <code>CHello</code>) so that no accidental circular dependencies appear &mdash; an URL module never includes anything, and a controller module may include as many URL modules as necessary.</p> 
+
+<pre><div class="src">/ocaml/urlHello.ml</div><{ocaml:open Ohm
+open Ohm.Universal
+
+module A = Action.Args
+
+let generic, def_generic = O.declare "hello" A.(r string)
+let index,   def_index   = O.declare "hello" A.none}></pre>
+
+<pre><div class="src">/ocaml/cHello.ml</div><{ocaml:open Ohm
+open Ohm.Universal
+
+let () = UrlHello.def_generic (fun req res ->
+  let greeting = "Hello, " ^ req # args ^ "!" in
+  return $ Action.json ["greeting", Json.String greeting] res)
+
+let () = UrlHello.def_index (fun req res ->
+  let url = Action.url UrlHello.generic () "World" in
+  return $ Action.redirect url res)}></pre>
+
+<p>Here, <code>O.declare</code> is a shortcut for <code>Action.declare O.server</code>, and it returns a tuple that contains an endpoint (<code>index</code>) and a definition function (<code>def_index</code>). From the controller file, call the definition function to define the action. Declared actions that are left undefined are a bad thing, so avoid them &mdash; a warning will appear at startup in the logs when this happens.</p>
