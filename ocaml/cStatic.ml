@@ -11,7 +11,8 @@ let books = OhmPaging.Book.([
     "tutorials/install.htm", "Installing Ohm" ;
     "tutorials/build.htm", "The build process" ; 
     "tutorials/run.htm", "Module Ohm.Run" ;
-    "tutorials/action.htm", "Adding new pages"
+    "tutorials/action.htm", "Adding new pages" ;
+    "tutorials/html.htm", "HTML templates" ;
   ] 
 ])
 
