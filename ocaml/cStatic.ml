@@ -9,7 +9,7 @@ type sections = [`Download|`Tutorials|`Docs|`Other]
 let books = OhmPaging.Book.([
   make [
     "tutorials/install.htm", "Installing Ohm" ;
-    "tutorials/build.htm", "The Build Process" ; 
+    "tutorials/build.htm", "The build process" ; 
     "tutorials/run.htm", "Module Ohm.Run" ;
     "tutorials/action.htm", "Adding new pages"
   ] 
