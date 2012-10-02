@@ -1,0 +1,54 @@
+<p class="abstract">How Ohm lets you persist and query data from a CouchDB database, and the recommended architecture patterns.</p>
+
+<h3>CouchDB</h3>
+
+<p>The default database used by Ohm is <a href="http://couchdb.apache.org/">CouchDB</a>, which was picked for its ability to store JSON documents and its map/reduce capabilities. The database access layer is already fully functional, but keep in mind that at some point in the future:</p>
+<ul>
+  <li>The current API for managing map/reduce views will be superseded by a cleaner one that uses OCaml code instead of JavaScript.</li>
+  <li>An alternate implementation that connects transparently to a PostgreSQL database will be made available.</li>
+</ul>
+<p>For now, though, make sure that a CouchDB database server (with a version greater than 1.1.0) is running on the same server as your Ohm application. Later, we will discuss ways to make it run on a different server and using an SSH tunnel to reach it.</p>
+
+<p>Do not enable the administration features on your CouchDB server. Do not, under any circumstances, make your CouchDB available on the internet. Keep your default configuration.</p>
+
+<h3>JSON Storage</h3>
+
+<p>To store values in CouchDB, you must first turn them into JSON, and you must be able to read them back from JSON later on. In the Ohm vocabulary, <b>formats</b> are modules that regroup a type and its JSON serialize/deserialize functions, and most CouchDB features will require you to provide formats at one point or another.</p>
+
+<p>Typical formats are created through a combination of functor <code>Ohm.Fmt.Make</code> (or its brother, <code>Ohm.Fmt.Extend</code>) and the <code>type json t</code> syntax extension provided by Ohm. For example, if you were writing a blog application, you might create a comment type that looks like this:</p>
+
+<pre><div class="src">/ocaml/mComment_store.ml</div><{ocaml:open Ohm
+open Ohm.Universal
+
+module T = struct
+  type json t = {
+    text   : string ;  (* The text of the comment *)
+    author : IUser.t ; (* User id of the author *)
+    post   : IPost.t ; (* Post id of the commented article *)
+    time   : float ;   (* GMT timestamp *)
+  } 
+end
+
+module Item = struct
+  include T
+  include Fmt.Extend(T)
+end}></pre>
+
+<p><b>Step-by-step</b> of the above: the code defined module <code>T</code> using a <code>type json t</code> type definition. This causes the syntax extension to automatically generate function definitions <code>json_of_t</code> and <code>t_of_json</code> which serialize and deserialize the object. All of these are then included into module <code>Item</code>, followed by the format extension: additional functions implemented in terms of the previous two functions, such as functions for converting directly to a JSON string and back, or deserialization functions which return an optional type instead of raising exceptions. The <code>Item</code> module is a format.</p>
+
+<p>The <code>type json t</code> syntax extension allows you to define record types (as the above), variant types, polymorphic variants, tuples, and objects:</p>
+
+<pre><{ocaml:type json t = Leaf | Node of int * t * t
+type json t = [ `TRUE | `FALSE | `FILE_NOT_FOUND ]
+type json t = < name : string ; age : int >
+type json t = (int * string * string) (* Mandatory parentheses *)
+type json t = (int list) (* Mandatory parentheses *)}></pre>
+
+<p>All the basic types <code>int</code>, <code>float</code>, <code>string</code>, <code>bool</code> and <code>unit</code> can be used. You may also use <code>list</code> and <code>option</code>. Finally, if <code>F</code> is a formatter (it implements signature <code>Ohm.Fmt.FMT</code>), then you may use <code>F.t</code> as part of another type definition. In particular, module <code>Ohm.Json</code> is itself a format, so you can use <code>Json.t</code> to express "don't unserialize this part". There is no support for mutually recursive types.</p>
+
+<p>You may change the serialized name of any field or constructor:</p>
+
+<pre><{ocaml:type json t = Leaf "L" | Node "N" of int * t * t
+type json t = < name "n" : string ; age "a" : int >}></pre>
+
+<p>The serialization semantics are compatible with the defunct <a href="http://mjambon.com/json-static.html">JSON-static</a>, and indeed the syntax extension was created to provide a non-deprecated replacement.</p>
