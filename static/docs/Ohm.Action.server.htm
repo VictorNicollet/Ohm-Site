@@ -3,10 +3,10 @@
   <h2 class="-docs">class type <a href="<{url:docs/index.htm}>">Ohm</a>.<a href="<{url:docs/Ohm.Action.htm}>">Action</a>.<strong>server</strong></h2>
 
   <pre><{ocaml:class type ['instance] server = object
-  method protocol : [`HTTP|`HTTPS]
+  method protocol : 'instance -> [`HTTP|`HTTPS]
   method domain : 'instance -> string
   method port : 'instance -> int
-  method cookie_domain : string option 
+  method cookie_domain : 'instance -> string option 
   method matches : [`HTTP|`HTTPS] -> string -> int -> 'instance option
 end}></pre>
 
@@ -39,7 +39,7 @@ end}></pre>
   <h3>Constructing the URL base</h3>
   
   <p>
-    The <code>protocol</code> method should return the preferred access protocol for the server &mdash; HTTP or HTTPS. 
+    The <code>protocol</code> method should return the preferred access protocol for the server &mdash; HTTP or HTTPS &mdash; corresponding to the provided instance.
   </p>
   
   <p>
@@ -53,14 +53,14 @@ end}></pre>
   <div class="example">
     <p><B>Example</b>: assume that <code>server</code> represents all subdomains of <code>http://*.example.com</code> on the default port. 
     </p>
-    <pre><{ocaml:server # protocol 
-val - : [`HTTP|`HTTPS] = `HTTP
+    <pre><{ocaml:server # protocol "www"
+- : [`HTTP|`HTTPS] = `HTTP
 
 server # domain "www"
-val - : string = "www.example.com"
+- : string = "www.example.com"
 
 server # port "www"
-val - : int = 80}></pre>
+- : int = 80}></pre>
   </div>
 
   <h3>Cookie domain</h3>
@@ -79,8 +79,8 @@ val - : int = 80}></pre>
 
   <div class="example">
     <p><b>Example</b>: again, assume <code>server</code> represents all subdomains of <code>*.example.com</code>, and we wish to make all cookies available across all subdomains.  </p>
-    <pre><{ocaml:server # cookie_domain
-val - : string option = Some ".example.com"}></pre>
+    <pre><{ocaml:server # cookie_domain "www"
+- : string option = Some ".example.com"}></pre>
   </div>
 
   <h3>Convenience</h3>
