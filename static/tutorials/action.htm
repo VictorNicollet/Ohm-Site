@@ -40,7 +40,7 @@
 open Ohm.Universal
 
 let hello = O.register "hello" Action.Args.none 
-  (fun req res -> return $ Action.page ignore res)}></pre>
+  (fun req res -> return (Action.page ignore res))}></pre>
 
 <pre><div class="src">/ocaml/cHello.mli</div><{ocaml:(* This file intentionally left blank *)}></pre>
 
@@ -56,10 +56,10 @@ end</pre>
 <p><b>Step-by-step</b> of the above code:</p>
 <pre><{ocaml:open Ohm
 open Ohm.Universal}></pre>
-<p>These are opened so that commonly used bindings, such as <code>Action</code> or <code>$</code>, can be used without prefixing.</p>
+<p>These are opened so that commonly used bindings, such as <code>Action</code>, can be used without prefixing.</p>
 <pre><{ocaml:let hello = O.register "hello" Action.Args.none}></pre>
 <p>The function <code>O.register</code> is defined for your convenience as being more or less equivalent to <code>Action.register O.server</code> which means that it automatically registers actions on the default server. The string <code>"hello"</code> specifies the path, and <code>Action.Args.none</code> says that no additional arguments are expected as part of the path (more on this later). </p>
-<pre><{ocaml:  (fun req res -> return $ Action.page ignore res)}></pre>
+<pre><{ocaml:  (fun req res -> return (Action.page ignore res))}></pre>
 <p>Here, we implement the action: a function which takes a request and a default response as parameters, and transforms the response into the final response by using <code>Action.page</code> which adds an HTML page to the response &mdash; we'll learn later how to generate HTML pages in Ohm.</p>
 <p>The value returned by the action should be a run-box, so we use <code>return</code> to turn our result into one.</p>
 <pre><{ocaml:open CHello}></pre>
@@ -75,7 +75,7 @@ open Ohm.Universal
 let hello = O.register "hello" Action.Args.(r string) 
   (fun req res -> 
     let greeting = "Hello, " ^ request # args ^ "!" in 
-    return $ Action.json [ "greeting", Json.String greeting ] res)}></pre>
+    return (Action.json [ "greeting", Json.String greeting ] res))}></pre>
 
 <p>Here, <code>Action.Args.(r string)</code> tells Ohm that the action expects one required argument (the <code>r</code>) that happens to be a string (the <code>string</code>). Read more about this in the documentation for module <a href="<{url:docs/Ohm.Action.Args.htm}>"><code>Ohm.Action.Args</code></a></p>
 
@@ -118,12 +118,12 @@ open Ohm.Universal
 let hello = O.register "hello" Action.Args.(r string) 
   (fun req res -> 
     let greeting = "Hello, " ^ request # args ^ "!" in 
-    return $ Action.json [ "greeting", Json.String greeting ] res)</span>
+    return (Action.json [ "greeting", Json.String greeting ] res))</span>
 
 <{ocaml:let _ = O.register "hello" Action.Args.none
   (fun req res -> 
     let url = Action.url hello () "World" in
-    return $ Action.redirect url res)}></pre>
+    return (Action.redirect url res))}></pre>
 
 <p>This might seem incorrect: why are we defining two actions for the same path? It's because the required string argument for the first action is actually part of the path, meaning that <code>/hello</code> will never trigger the first action &mdash; the argument is missing. </p>
 
@@ -148,10 +148,10 @@ open Ohm.Universal
 
 let () = UrlHello.def_generic (fun req res ->
   let greeting = "Hello, " ^ req # args ^ "!" in
-  return $ Action.json ["greeting", Json.String greeting] res)
+  return (Action.json ["greeting", Json.String greeting] res))
 
 let () = UrlHello.def_index (fun req res ->
   let url = Action.url UrlHello.generic () "World" in
-  return $ Action.redirect url res)}></pre>
+  return (Action.redirect url res))}></pre>
 
 <p>Here, <code>O.declare</code> is a shortcut for <code>Action.declare O.server</code>, and it returns a tuple that contains an endpoint (<code>index</code>) and a definition function (<code>def_index</code>). From the controller file, call the definition function to define the action. Declared actions that are left undefined are a bad thing, so avoid them &mdash; a warning will appear at startup in the logs when this happens.</p>

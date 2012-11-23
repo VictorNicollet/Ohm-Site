@@ -49,9 +49,9 @@ let render _data =
 open Ohm.Universal
 
 let () = UrlHello.def_generic (fun req res ->
-  let! writer = ohm $ Asset_Hello_Index.render name in
+  let! writer = ohm (Asset_Hello_Index.render name) in
   let  page   = O.render_page ~title:"Greeting" writer in
-  return $ Action.page page res)}></pre>
+  return (Action.page page res))}></pre>
 
 <p>The <code>O.print_page</code> function is known as a <b>renderer</b>: it takes an HTML writer and wraps it into a complete HTML document with a doctype, a content-type, stylesheets, scripts, a title, and so on &mdash; the original writer provides only a bit of the body, and leaves the rest to the renderer.</p>
 

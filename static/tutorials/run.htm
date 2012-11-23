@@ -76,14 +76,14 @@ let log_user_name : (< user : string ; .. >, unit) Run.t =
   Util.log "User name : %s" user ;
   return ()}></pre>
 
-<p>Here, <code>(#user)</code> is another syntax extension which means <code>(fun x -> x#user)</code>. Ohm.Universal also defines an operator <code>$</code> similar to that of Haskell: <code>f $ x</code> is equivalent to <code>f x</code>, but plays nice with parentheses. Last but not least, there is the <code>ohm_req_or</code> function:</p>
+<p>Here, <code>(#user)</code> is another syntax extension which means <code>(fun x -> x#user)</code>. Last but not least, there is the <code>ohm_req_or</code> function:</p>
 
 <pre><{ocaml:open Ohm
 
 val get_user : id -> (ctx, user option) Run.t
 
 let user_is_confirmed id = 
-  let! user = ohm_req_or (return false) $ get_user id in 
+  let! user = ohm_req_or (return false) (get_user id) in 
   return (user # confirmed)}></pre>
 
 <p><code>ohm_req_or default value callback</code> will evaluate run-box <code>value</code>. If it returns <code>None</code>, then it evaluates and returns <code>default</code>, and if it returns <code>Some x</code>, it evaluates and returns <code>callback x</code>. This function is extremely useful when dealing with functions that read objects from databases, and where the absence of an object must be handled elegantly.</p>
