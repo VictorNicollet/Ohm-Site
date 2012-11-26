@@ -1,0 +1,102 @@
+<p class="abstract">Understand the way Ohm helps you serialize data as JSON for sending to both the CouchDB database and the client-side code.</p>
+
+<p><a href="http://www.json.org/">JSON is a standard format for data serialization. A JSON value can be one of the following:</p>
+
+<ul>
+  <li>A number, such as <code>12</code> or <code>3.14</code>.</li>
+  <li>A string, such as <code>"Hello"</code>.</li>
+  <li>A boolean (<code>true</code> or <code>false</code>)</li>
+  <li>The <code>null</code> keyword indicating an absence of value.</li>
+  <li>An array of values, such as <code>[1,2,3]</code>.</li>
+  <li>An object which maps string keys to arbitrary values, such as <code>{"a":1,"b":2}</code>.</li>
+</ul>
+
+<p>This definition is recursive, meaning that arrays and objects may in turn contain other arrays and objects. Also, collections are not expected to be homogenous: <code>["a",3,true]</code> is a valid array.
+</p>
+
+<h3>Manipulating Raw JSON</h3>
+
+<p>The Ohm framework provides module <code>Ohm.Json</code> for handling JSON values. In particular, it provides a type <code>Ohm.Json.t</code> for representing JSON values:</p>
+
+<pre><{ocaml:type t =
+  | Null
+  | Array of t list
+  | Object of (string * t) list
+  | Float of float
+  | Int of int
+  | Bool of bool
+  | String of string}></pre>
+
+<p>Typical situations where JSON might be used in Ohm:</p>
+
+<ul>
+  <li>Saving and loading data in a CouchDB database happens entirely in JSON.</li>
+  <li>Most of the AJAX POST queries will have a content-type of <code>application/json</code>, meaning the payload will be a JSON value.</li>
+  <li>Responding to AJAX queries will involve returning a JSON payload.</li>
+  <li>The server can ask the client to call a client-side javascript function, and provide the arguments for that function as JSON values.</li>
+  <li>Plugin <code>ohmTrackLogs</code> writes visitor tracking logs to a log file with a JSON value for every log entry (one entry per line).</li> 
+</ul>
+
+<p>In almost every single situation where JSON is used by the framework, Ohm will perform the serialization for you (turning the JSON into an actual string, or extracting the JSON from a string). In particular, when exchanging JSON paylods with either CouchDB or client-side code, you will never have to perform serialization and unserialization yourself.</p>
+
+<h3>JSON Syntax Extension</h3>
+
+<p>In practice, save for a handful of narrow situations (such as very simple AJAX responses), you should not build JSON values by hand. Doing so usually means that the structure of the returned JSON value is not cleanly documented, not to mention that parsing data back from a JSON value is significantly harder than generating the JSON value in the first place, even with appropriate helper functions.</p>
+
+<p>Ohm provides a syntax extension for generating serialization and unserialization functions for most OCaml types. Here is how a typical user account might be defined:</p>
+
+<pre><{ocaml:type json t = {
+  name     : string ;
+  email    : string ;
+ ?password : PasswordHash.t option ;
+  status   : [ `Confirmed   "C"
+             | `Unconfirmed "U"
+             | `Deleted     "D" ] ;
+}}></pre>
+
+<p>The syntax extension expects a type to be defined as <code>type json t</code> and be a variant, a polymorphic variant, a record type or an object type. It generates two serialization functions: </p>
+
+<pre><{ocaml:val t_of_json : Ohm.Json.t -> t
+val json_of_t : t -> Ohm.Json.t}></pre>
+
+<p>Note that <code>t_of_json</code> might raise an exception <code>Ohm.Json.Error</code> if the input JSON does not match the format. The detailed rules for serialization are:</p>
+
+<ul>
+  <li><p>Types <code>string</code>, <code>bool</code> and <code>int</code> behave as expected (serializing to <code>Json.String</code>, <code>Json.Bool</code> and <code>Json.Int</code> respectively). Type <code>float</code> serializes to <code>Json.Float</code>, but will accept deserialization from <code>Json.Int</code> as well.</p></li>
+  <li><p>Optional types <code>x option</code> will serialize <code>None</code> to <code>Json.Null</code> and back.</p></li>
+  <li><p>List types <code>x list</code> are serialized as arrays.</p></li>
+  <li><p>Tuple types <code>(int * string * bool)</code> are serialized as arrays as well, for instance <code>[1,"A",true]</code> for <code>(1,"A",true)</code>.</p>
+  <p>Due to a limitation in the syntax extension, <code>type json t = a * b</code> is a syntax error. Write brackets around the tuple: <code>type json t = (a * b)</code>.</p></li>
+  <li><p>Variant types, such as <code>A | B of int * int</code>, are converted to either a string for constructors without arguments (<code>"A"</code> for <code>A</code>) or arrays (<code>["B",1,2]</code> for <code>B(1,2)</code>).</p>
+  <p>It is possible to use a different string than the constructor name, such as <code>Yes "y"|No "n"</code>.</p></li>
+  <li><p>Polymorphic variant types such as <code>[`A | `B of int * int</code> behave the same as normal variant types, with the exception that constructors with multiple arguments have their arguments grouped as an array: <code>["B",[1,2]]</code> for <code>`B(1,2)</code>.</p></li>
+  <li><p>Record types such as <code>{ a : int ; b : string }</code> and object types such as <code>&lt; a : int ; b : string &gt;</code> will be serialized as a JSON object, such as <code>{"a":1,"b":"X"}</code> for <code>{a=1;b="X"}</code>.</p>
+  <p>It is possible to provide a different serialization label : <code>{ name "n" : string }</code>.</p>
+  <p>It is possible to mark a given field as optional, which will let the unserialization funciton handle cases where the field is missing (being set to <code>null</code> does not count as missing). The two possibilities are defining the field as optional (<code>?name : string option</code>) and providing a default value (<code>?name : string = "Anonymous"</code>).</p></li>
+  <li><p>If module <code>M</code> provides a type <code>t</code>, a <code>of_json</code> function and a <code>to_json</code> function, then <code>M.t</code> can be used as part of a JSON type definition and the appropriate functions will be called to perform serialization and deserialization.</p> 
+  </li>
+</ul>
+
+<p>This syntax extension is almost entirely compatible with <a href="http://mjambon.com/json-static.html">json-static</a>, the only differences being a few bugfixes, the lack of an <code>assoc</code> keyword (there's an advanced technique for that) and recursive types (use recursive modules instead).</p>
+
+<h3>JSON Formats</h3>
+
+<p>In practice, you should never use the generated functions <code>t_of_json</code> and <code>json_of_t</code> yourself. Most Ohm modules and plugins expect you to provide them with either a format module, or a formatter value. Even when working on your own, using format modules is a superior way of doing things.</p>
+
+<p>A format module provides a type <code>t<.code> along with a handful of ways to serialize and unserialize a type. It includes functions <code>of_json</code> and <code>to_json</code> (which let you use the formatter module as part of another type definition), function <code>of_json_safe</code> which returns <code>None</code> if parsing fails (instead of an exception), and a formatter value <code>fmt</code></p>
+
+<p>Building a format module is simple : use functor <code>Ohm.Fmt.Make</code></p>
+
+<pre><{ocaml:module Status = Ohm.Fmt.Make(struct
+  type json t = [ `New | `Old ]
+end)}></pre>
+
+<p>If you are using variant types or record types, you cannot define a type in this way and hope for it to be available (because the type's labels or constructors are not available in any named module), so an alternate way of doing this is:</p>
+
+<pre><{ocaml:module Status = struct
+  module T = struct
+    type json t = New | Old
+  end
+  include T
+  include Ohm.Fmt.Extend(T)
+end}></pre>
