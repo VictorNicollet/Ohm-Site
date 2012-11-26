@@ -1,6 +1,6 @@
 <p class="abstract">Understand the way Ohm helps you serialize data as JSON for sending to both the CouchDB database and the client-side code.</p>
 
-<p><a href="http://www.json.org/">JSON is a standard format for data serialization. A JSON value can be one of the following:</p>
+<p><a href="http://www.json.org/">JSON</a> is a standard format for data serialization. A JSON value can be one of the following:</p>
 
 <ul>
   <li>A number, such as <code>12</code> or <code>3.14</code>.</li>
@@ -83,7 +83,7 @@ val json_of_t : t -> Ohm.Json.t}></pre>
 
 <p>In practice, you should never use the generated functions <code>t_of_json</code> and <code>json_of_t</code> yourself. Most Ohm modules and plugins expect you to provide them with either a format module, or a formatter value. Even when working on your own, using format modules is a superior way of doing things.</p>
 
-<p>A format module provides a type <code>t<.code> along with a handful of ways to serialize and unserialize a type. It includes functions <code>of_json</code> and <code>to_json</code> (which let you use the formatter module as part of another type definition), function <code>of_json_safe</code> which returns <code>None</code> if parsing fails (instead of an exception), and a formatter value <code>fmt</code></p>
+<p>A format module provides a type <code>t</code> along with a handful of ways to serialize and unserialize a type. It includes functions <code>of_json</code> and <code>to_json</code> (which let you use the formatter module as part of another type definition), function <code>of_json_safe</code> which returns <code>None</code> if parsing fails (instead of an exception), and a formatter value <code>fmt</code></p>
 
 <p>Building a format module is simple : use functor <code>Ohm.Fmt.Make</code></p>
 

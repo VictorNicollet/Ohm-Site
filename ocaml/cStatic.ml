@@ -13,8 +13,7 @@ let books = OhmPaging.Book.([
     "tutorials/run.htm", "Module Ohm.Run" ;
     "tutorials/action.htm", "Adding new pages" ;
     "tutorials/html.htm", "HTML templates" ;
-    "tutorials/ohm.htm", "JSON serialization" ;
-    "tutorials/couch.htm", "Database storage" ;
+    "tutorials/json.htm", "JSON serialization" ;
   ] 
 ])
 
