@@ -39,7 +39,7 @@ let render _data =
     Buffer.add_substring _html.Ohm.Html.html _source 115 6 ;
   )}></pre>
 
-<p>Every HTML template is compiled to a function which takes a single argument (of whatever type matches the way it is used in the tempalte itself) and returns a <a href="<{url:tutorials/run.htm}>">run-box</a> containing an HTML writer. The reason why a run-box is returned (instead of a normal value) is that some rendering operations may involve evaluating run-boxes: maybe a just-in-time database read is required to render something, or maybe the internationalization function (which is part of the run-box context) is used to translate some text...
+<p>Every HTML template is compiled to a function which takes a single argument (of whatever type matches the way it is used in the template itself) and returns a <a href="<{url:tutorials/run.htm}>">run-box</a> containing an HTML writer. The reason why a run-box is returned (instead of a normal value) is that some rendering operations may involve evaluating run-boxes: maybe a just-in-time database read is required to render something, or maybe the internationalization function (which is part of the run-box context) is used to translate some text...
 
 <h3>Using the template</h3>
 
